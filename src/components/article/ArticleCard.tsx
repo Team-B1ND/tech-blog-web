@@ -47,7 +47,7 @@ const Card = styled.article<{ $variant: 'list' | 'block' }>`
           overflow: hidden;
 
           &:hover {
-            transform: translateY(-4px);
+            transform: translateY(-2px);
           }
         `
       : css`
@@ -55,7 +55,7 @@ const Card = styled.article<{ $variant: 'list' | 'block' }>`
           border-bottom: 1px solid ${theme.colors.border};
 
           &:hover {
-            transform: translateX(4px);
+            transform: translateX(2px);
           }
 
           @media (max-width: ${theme.breakpoints.mobile}) {
