@@ -38,8 +38,8 @@ export const Sidebar = () => {
         ) : (
           <S.TagList>
             {tags.map((tag) => (
-              <S.Tag key={tag.id} onClick={() => handleTagClick(tag.name)}>
-                {tag.name}
+              <S.Tag key={tag.tag} onClick={() => handleTagClick(tag.tag)}>
+                {tag.tag}
               </S.Tag>
             ))}
           </S.TagList>
