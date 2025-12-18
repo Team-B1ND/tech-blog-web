@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import type { Category } from '../types/article';
@@ -6,10 +6,12 @@ import { categories } from '../types/article';
 import { MarkdownToolbar } from '../components/write/MarkdownToolbar';
 import { MarkdownRenderer } from '../components/common/MarkdownRenderer';
 import { useMarkdownEditor } from '../hooks/write/useMarkdownEditor.ts';
+import { useAuth } from '../contexts/AuthContext';
 import ImageIcon from '../assets/icons/image.svg?react';
 
 export const Write = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState('');
   const [authorIds, setAuthorIds] = useState('');
@@ -27,6 +29,13 @@ export const Write = () => {
     handleImageUpload: handleContentImageUpload,
     triggerImageUpload,
   } = useMarkdownEditor(content, setContent);
+
+  // 로그인된 사용자 ID로 authorIds 초기화
+  useEffect(() => {
+    if (user && !authorIds) {
+      setAuthorIds(user.id);
+    }
+  }, [user, authorIds]);
 
   const canSubmit = title.trim() && authorIds.trim() && content.trim() && !isSubmitting;
 
@@ -73,9 +82,6 @@ export const Write = () => {
       <Header>
         <Title>새 글 작성</Title>
         <ButtonGroup>
-          <CancelButton type="button" onClick={() => navigate('/')}>
-            취소
-          </CancelButton>
           <SubmitButton
             type="button"
             onClick={handleSubmit}
@@ -230,21 +236,6 @@ const Title = styled.h1`
 const ButtonGroup = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-const CancelButton = styled.button`
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg}`};
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  font-weight: 500;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  background-color: ${({ theme }) => theme.colors.categoryBg};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.border};
-    color: ${({ theme }) => theme.colors.text};
-  }
 `;
 
 const SubmitButton = styled.button`

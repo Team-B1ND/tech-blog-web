@@ -1,6 +1,7 @@
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { getAuthorById, getArticlesByAuthor } from '../data/authors';
+import { useAuth } from '../contexts/AuthContext';
 import { ArticleCard } from '../components/article/ArticleCard';
 import { Pagination } from '../components/common/Pagination';
 import { NotFound } from './NotFound';
@@ -10,12 +11,14 @@ const ARTICLES_PER_PAGE = 9;
 export const Author = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
+  const { user, isLoggedIn, logout } = useAuth();
   const author = getAuthorById(id || '');
 
   if (!author) {
     return <NotFound />;
   }
 
+  const isOwnProfile = isLoggedIn && user?.id === author.id;
   const allArticles = getArticlesByAuthor(author.name);
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
   const totalPages = Math.ceil(allArticles.length / ARTICLES_PER_PAGE);
@@ -26,10 +29,20 @@ export const Author = () => {
     <Container>
       <AuthorHeader>
         <NameRow>
-	        <Generation>{author.generation}기</Generation>
+          <Generation>{author.generation}기</Generation>
           <Name>{author.name}</Name>
         </NameRow>
         <Bio>{author.bio}</Bio>
+        {isOwnProfile && (
+          <ButtonRow>
+            <EditProfileButton to="/dashboard/profile">
+              내 정보 수정
+            </EditProfileButton>
+            <LogoutButton onClick={logout}>
+              로그아웃
+            </LogoutButton>
+          </ButtonRow>
+        )}
       </AuthorHeader>
 
       <ArticlesSection>
@@ -91,6 +104,42 @@ const Bio = styled.p`
   font-size: ${({ theme }) => theme.fontSizes.lg};
   color: ${({ theme }) => theme.colors.textSecondary};
   line-height: 1.6;
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing.md};
+  margin-top: ${({ theme }) => theme.spacing.lg};
+`;
+
+const EditProfileButton = styled(Link)`
+  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg}`};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: 600;
+  color: white;
+  background-color: ${({ theme }) => theme.colors.primary};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.primaryHover};
+  }
+`;
+
+const LogoutButton = styled.button`
+  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg}`};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  background-color: ${({ theme }) => theme.colors.categoryBg};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.border};
+    color: ${({ theme }) => theme.colors.text};
+  }
 `;
 
 const ArticlesSection = styled.section``;

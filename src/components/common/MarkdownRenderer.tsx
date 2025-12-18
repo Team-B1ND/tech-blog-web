@@ -11,34 +11,35 @@ interface MarkdownRendererProps {
 
 export const MarkdownRenderer = ({ content, className }: MarkdownRendererProps) => {
   return (
-    <ReactMarkdown
-      className={className}
-      remarkPlugins={[remarkGfm]}
-      components={{
-        code({ className, children, node, ...props }) {
-          const match = /language-(\w+)/.exec(className || '');
-          const isBlock = node?.position?.start.line !== node?.position?.end.line || match;
-          return isBlock && match ? (
-            <CodeBlockWrapper>
-              <CodeLanguage>{match[1]}</CodeLanguage>
-              <SyntaxHighlighter
-                style={oneDark}
-                language={match[1]}
-                PreTag="div"
-              >
-                {String(children).replace(/\n$/, '')}
-              </SyntaxHighlighter>
-            </CodeBlockWrapper>
-          ) : (
-            <code className={className} {...props}>
-              {children}
-            </code>
-          );
-        },
-      }}
-    >
-      {content}
-    </ReactMarkdown>
+    <div className={className}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          code({ className, children, node, ...props }) {
+            const match = /language-(\w+)/.exec(className || '');
+            const isBlock = node?.position?.start.line !== node?.position?.end.line || match;
+            return isBlock && match ? (
+              <CodeBlockWrapper>
+                <CodeLanguage>{match[1]}</CodeLanguage>
+                <SyntaxHighlighter
+                  style={oneDark}
+                  language={match[1]}
+                  PreTag="div"
+                >
+                  {String(children).replace(/\n$/, '')}
+                </SyntaxHighlighter>
+              </CodeBlockWrapper>
+            ) : (
+              <InlineCode {...props}>
+                {children}
+              </InlineCode>
+            );
+          },
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
   );
 };
 
@@ -62,4 +63,12 @@ const CodeLanguage = styled.span`
   transition: opacity 0.2s ease;
   z-index: 1;
   pointer-events: none;
+`;
+
+const InlineCode = styled.code`
+  padding: 0.2em 0.4em;
+  background-color: rgba(110, 118, 129, 0.2);
+  border-radius: 4px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.85em;
 `;

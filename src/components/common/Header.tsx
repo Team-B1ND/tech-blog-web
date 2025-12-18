@@ -37,9 +37,9 @@ const Header = () => {
             <IconButton onClick={toggleTheme} aria-label="테마 변경">
               {mode === 'light' ? <MoonIcon /> : <SunIcon />}
             </IconButton>
-	          <SubscribeButton to="/subscribe" target="_blank">
-		          구독하기
-	          </SubscribeButton>
+            <SubscribeButton to="/subscribe">
+              구독하기
+            </SubscribeButton>
           </Nav>
         </HeaderInner>
       </HeaderWrapper>
