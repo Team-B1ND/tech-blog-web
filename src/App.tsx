@@ -8,6 +8,7 @@ import Article from './pages/Article';
 import {Home} from "./pages/Home.tsx";
 import {Subscribe} from "./pages/Subscribe.tsx";
 import {Write} from "./pages/Write.tsx";
+import {NotFound} from "./pages/NotFound.tsx";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
               <Route path="article/:id" element={<Article />} />
               <Route path="subscribe" element={<Subscribe />} />
               <Route path="write" element={<Write />} />
+              <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
         </BrowserRouter>

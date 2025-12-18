@@ -10,6 +10,7 @@ import { useSearch } from '../contexts/SearchContext';
 import CommentSection from '../components/comment/CommentSection.tsx';
 import {ViewSpan} from "../components/article/ViewSpan.tsx";
 import LinkIcon from '../assets/icons/link.svg?react';
+import {NotFound} from "./NotFound.tsx";
 
 const Article = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,12 +29,7 @@ const Article = () => {
   };
 
   if (!article) {
-    return (
-      <NotFound>
-        <NotFoundTitle>글을 찾을 수 없습니다</NotFoundTitle>
-        <BackLink to="/">홈으로 돌아가기</BackLink>
-      </NotFound>
-    );
+    return <NotFound />;
   }
 
   return (
@@ -400,24 +396,4 @@ const ShareButton = styled.button<{ $copied: boolean }>`
 
 const BackArrow = styled.span`
   font-size: ${({ theme }) => theme.fontSizes.lg};
-`;
-
-const NotFound = styled.div`
-  text-align: center;
-  padding: ${({ theme }) => theme.spacing.xxxl} 0;
-`;
-
-const NotFoundTitle = styled.h1`
-  font-size: ${({ theme }) => theme.fontSizes.xxl};
-  color: ${({ theme }) => theme.colors.text};
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
-`;
-
-const BackLink = styled(Link)`
-  color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.fontSizes.md};
-
-  &:hover {
-    text-decoration: underline;
-  }
 `;

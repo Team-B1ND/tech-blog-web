@@ -7,12 +7,18 @@ import {ArticleCard} from "../components/article/ArticleCard.tsx";
 import {CategoryFilter} from "../components/filter/CategoryFilter.tsx";
 import {Sidebar} from "../components/common/Sidebar.tsx";
 import {Pagination} from "../components/common/Pagination.tsx";
+import {NotFound} from "./NotFound.tsx";
 
 const ARTICLES_PER_PAGE = 20;
+const validSlugs = new Set(['dev', 'infra', 'design', 'product']);
 
 export const Home = () => {
   const { category: categorySlug } = useParams<{ category?: string }>();
   const [searchParams] = useSearchParams();
+
+  if (categorySlug && !validSlugs.has(categorySlug)) {
+    return <NotFound />;
+  }
 
   const selectedCategory: Category = categorySlugMap[categorySlug as CategorySlug] || '전체';
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
