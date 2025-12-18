@@ -1,22 +1,23 @@
 import styled from 'styled-components';
+import {Link} from "react-router-dom";
 
 const Footer = () => {
   return (
     <FooterWrapper>
-      <FooterInner>
-        <FooterLeft>
-          <FooterLogo>
-            <LogoText>B1ND</LogoText>
-            <LogoSub>tech</LogoSub>
-          </FooterLogo>
-          <Copyright>© {new Date().getFullYear()} B1ND. All rights reserved.</Copyright>
-        </FooterLeft>
-        <FooterLinks>
-          <FooterLink href="https://github.com/b1nd" target="_blank" rel="noopener noreferrer">
-            GitHub
-          </FooterLink>
-        </FooterLinks>
-      </FooterInner>
+      <FooterLinks>
+        <FooterA href="https://b1nd.com" target="_blank" rel="noopener noreferrer">
+          B1ND 소개
+        </FooterA>
+        <FooterA href="https://dodam.b1nd.com" target="_blank" rel="noopener noreferrer">
+					도담도담
+				</FooterA>
+        <FooterLink to="/dashboard/write">
+          아티클 작성
+        </FooterLink>
+        <FooterA href="https://github.com/Team-B1ND" target="_blank" rel="noopener noreferrer">
+          GitHub
+        </FooterA>
+      </FooterLinks>
     </FooterWrapper>
   );
 };
@@ -25,16 +26,16 @@ export default Footer;
 
 const FooterWrapper = styled.footer`
   margin-top: auto;
-  border-top: 1px solid ${({ theme }) => theme.colors.border};
   background-color: ${({ theme }) => theme.colors.background};
 `;
 
-const FooterInner = styled.div`
+const FooterLinks = styled.div`
   max-width: ${({ theme }) => theme.breakpoints.desktop};
   margin: 0 auto;
   padding: ${({ theme }) => theme.spacing.xxl} ${({ theme }) => theme.spacing.lg};
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+	gap: ${({ theme }) => theme.spacing.xl};
   align-items: center;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
@@ -45,45 +46,17 @@ const FooterInner = styled.div`
   }
 `;
 
-const FooterLeft = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.sm};
-`;
+const FooterLink = styled(Link)`
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  color: ${({ theme }) => theme.colors.textSecondary};
+  transition: color 0.2s ease;
 
-const FooterLogo = styled.div`
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    justify-content: center;
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
   }
 `;
 
-const LogoText = styled.span`
-  font-size: 20px;
-  font-weight: 800;
-  color: ${({ theme }) => theme.colors.text};
-`;
-
-const LogoSub = styled.span`
-  font-size: 14px;
-  font-weight: 500;
-  color: ${({ theme }) => theme.colors.primary};
-`;
-
-const Copyright = styled.p`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.textTertiary};
-`;
-
-const FooterLinks = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing.lg};
-`;
-
-const FooterLink = styled.a`
+const FooterA = styled.a`
   font-size: ${({ theme }) => theme.fontSizes.sm};
   color: ${({ theme }) => theme.colors.textSecondary};
   transition: color 0.2s ease;
