@@ -1,184 +1,76 @@
-import { useParams, useSearchParams } from 'react-router-dom';
-import styled from 'styled-components';
-import type { Category, CategorySlug } from '@/types/article.ts';
-import { slugToCategory, categoryToSlug } from '@/types/article.ts';
-import { useArticles } from '@/api';
-import { mapApiArticles } from '@/lib/api/mappers.ts';
-import { ArticleCard } from '@/components/article/ArticleCard.tsx';
-import { ArticleCardSkeleton } from '@/skeleton/article/ArticleCardSkeleton.tsx';
-import { CategoryFilter } from '@/components/filter/CategoryFilter.tsx';
-import { Sidebar } from '@/components/common/Sidebar.tsx';
-import { Pagination } from '@/components/common/Pagination.tsx';
-import { NotFound } from '@/pages/common/NotFound.tsx';
-
-const ARTICLES_PER_PAGE = 20;
-const validSlugs = new Set(['dev', 'infra', 'design', 'product']);
+import { useHomePage } from '@/hooks/home/useHomePage';
+import { ArticleCard } from '@/components/article/ArticleCard';
+import { ArticleCardSkeleton } from '@/skeleton/article/ArticleCardSkeleton';
+import { CategoryFilter } from '@/components/filter/CategoryFilter';
+import { Sidebar } from '@/components/common/Sidebar';
+import { Pagination } from '@/components/common/Pagination';
+import { NotFound } from '@/pages/common/NotFound';
+import * as S from './Home.style';
 
 export const Home = () => {
-  const { category: categorySlug } = useParams<{ category?: string }>();
-  const [searchParams] = useSearchParams();
-
-  const isValidSlug = !categorySlug || validSlugs.has(categorySlug);
-  const selectedCategory: Category = isValidSlug
-    ? (slugToCategory[categorySlug as CategorySlug] || 'ALL')
-    : 'ALL';
-  const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
-
-  // ALL일 때는 category 파라미터를 보내지 않음
-  const { data, isLoading, error } = useArticles({
-    category: selectedCategory === 'ALL' ? undefined : selectedCategory,
-    page: currentPage,
-    limit: ARTICLES_PER_PAGE,
-  });
+  const {
+    isValidSlug,
+    selectedCategory,
+    currentPage,
+    articles,
+    totalPages,
+    totalCount,
+    currentSlug,
+    isLoading,
+    isError,
+  } = useHomePage();
 
   if (!isValidSlug) {
     return <NotFound />;
   }
 
-  const articles = data ? mapApiArticles(data.articles) : [];
-  const totalPages = data?.pagination.totalPages || 1;
-  const totalCount = data?.pagination.totalCount || 0;
-
-  const currentSlug = categoryToSlug[selectedCategory];
-
-  if (error) {
+  if (isError) {
     return (
-      <HomeContainer>
-        <ErrorState>데이터를 불러오는데 실패했습니다.</ErrorState>
-      </HomeContainer>
+      <S.HomeContainer>
+        <S.ErrorState>데이터를 불러오는데 실패했습니다.</S.ErrorState>
+      </S.HomeContainer>
     );
   }
 
   return (
-    <HomeContainer>
-      <Hero>
-        <HeroTitle>B1ND 기술 블로그</HeroTitle>
-        <HeroSubtitle>
-          B1ND 팀이 겪은 기술적 도전과 해결 과정을 모두에게 공유합니다
-        </HeroSubtitle>
-      </Hero>
+    <S.HomeContainer>
+      <S.Hero>
+        <S.HeroTitle>B1ND 기술 블로그</S.HeroTitle>
+        <S.HeroSubtitle>B1ND 팀이 겪은 기술적 도전과 해결 과정을 모두에게 공유합니다</S.HeroSubtitle>
+      </S.Hero>
 
-      <ContentWrapper>
-        <MainContent>
-          <FilterRow>
-            <CategoryFilter
-              selectedCategory={selectedCategory}
-            />
-            <ArticleCount>총 {totalCount}개의 글</ArticleCount>
-          </FilterRow>
+      <S.ContentWrapper>
+        <S.MainContent>
+          <S.FilterRow>
+            <CategoryFilter selectedCategory={selectedCategory} />
+            <S.ArticleCount>총 {totalCount}개의 글</S.ArticleCount>
+          </S.FilterRow>
 
           {isLoading ? (
-            <ArticleList>
+            <S.ArticleList>
               {Array.from({ length: 5 }).map((_, i) => (
                 <ArticleCardSkeleton key={i} />
               ))}
-            </ArticleList>
+            </S.ArticleList>
           ) : articles.length === 0 ? (
-            <EmptyState>
-              아티클이 아직 없어요
-            </EmptyState>
+            <S.EmptyState>아티클이 아직 없어요</S.EmptyState>
           ) : (
             <>
-              <ArticleList>
+              <S.ArticleList>
                 {articles.map((article) => (
                   <ArticleCard key={article.id} article={article} />
                 ))}
-              </ArticleList>
+              </S.ArticleList>
 
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                baseUrl={currentSlug ? `/${currentSlug}` : '/'}
-              />
+              <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl={currentSlug ? `/${currentSlug}` : '/'} />
             </>
           )}
-        </MainContent>
+        </S.MainContent>
 
-        <SidebarWrapper>
+        <S.SidebarWrapper>
           <Sidebar />
-        </SidebarWrapper>
-      </ContentWrapper>
-    </HomeContainer>
+        </S.SidebarWrapper>
+      </S.ContentWrapper>
+    </S.HomeContainer>
   );
 };
-
-const HomeContainer = styled.div``;
-
-const Hero = styled.section`
-  margin-bottom: ${({ theme }) => theme.spacing.xxl};
-`;
-
-const HeroTitle = styled.h1`
-  font-size: ${({ theme }) => theme.fontSizes.xxxl};
-  font-weight: 800;
-  color: ${({ theme }) => theme.colors.text};
-  line-height: 1.3;
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    font-size: ${({ theme }) => theme.fontSizes.xxl};
-  }
-`;
-
-const HeroSubtitle = styled.p`
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-  color: ${({ theme }) => theme.colors.textSecondary};
-  line-height: 1.6;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    font-size: ${({ theme }) => theme.fontSizes.md};
-  }
-`;
-
-const ContentWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: ${({ theme }) => theme.spacing.xxl};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const MainContent = styled.div`
-  min-width: 0;
-`;
-
-const SidebarWrapper = styled.div`
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    display: none;
-  }
-`;
-
-const FilterRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing.md};
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
-`;
-
-const ArticleCount = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.textTertiary};
-`;
-
-const ArticleList = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const EmptyState = styled.div`
-  text-align: center;
-  padding: ${({ theme }) => theme.spacing.xxxl} 0;
-  color: ${({ theme }) => theme.colors.textTertiary};
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-`;
-
-const ErrorState = styled.div`
-  text-align: center;
-  padding: ${({ theme }) => theme.spacing.xxxl} 0;
-  color: ${({ theme }) => theme.colors.error};
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-`;

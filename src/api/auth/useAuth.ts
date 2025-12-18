@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient, clearTokens, setTokens } from '@/lib/api/client';
 import type { ApiResponse, ApiAuthInfo, ApiLoginInfo, ApiTokenResponse } from '@/lib/api/types';
 
-// 로그인 URL 조회
 export const useLoginInfo = () => {
   return useQuery({
     queryKey: ['auth', 'login'],
@@ -13,7 +12,6 @@ export const useLoginInfo = () => {
   });
 };
 
-// 현재 인증 정보 조회
 export const useAuthInfo = () => {
   return useQuery({
     queryKey: ['auth', 'me'],
@@ -25,7 +23,6 @@ export const useAuthInfo = () => {
   });
 };
 
-// 마스터 로그인 (개발용)
 export const useMasterLogin = () => {
   const queryClient = useQueryClient();
 
@@ -42,13 +39,10 @@ export const useMasterLogin = () => {
   });
 };
 
-// 토큰 갱신
 export const useRefreshToken = () => {
   return useMutation({
     mutationFn: async (refreshToken: string) => {
-      const { data } = await apiClient.post<ApiResponse<ApiTokenResponse>>('/auth/refresh', {
-        refreshToken,
-      });
+      const { data } = await apiClient.post<ApiResponse<ApiTokenResponse>>('/auth/refresh', { refreshToken });
       return data.data;
     },
     onSuccess: (data) => {
@@ -57,7 +51,6 @@ export const useRefreshToken = () => {
   });
 };
 
-// 로그아웃 (토큰 삭제)
 export const useLogout = () => {
   const queryClient = useQueryClient();
 

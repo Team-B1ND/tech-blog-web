@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
 import type { ApiResponse, ApiMember, ApiArticle, PaginatedResponse, ActivateRequest, UpdateProfileRequest } from '@/lib/api/types';
 
-// 회원 상세 조회
 export const useMember = (memberId: string) => {
   return useQuery({
     queryKey: ['member', memberId],
@@ -14,22 +13,19 @@ export const useMember = (memberId: string) => {
   });
 };
 
-// 회원별 글 목록 조회
 export const useMemberArticles = (memberId: string, params?: { page?: number; limit?: number }) => {
   return useQuery({
     queryKey: ['member', memberId, 'articles', params],
     queryFn: async () => {
-      const { data } = await apiClient.get<ApiResponse<PaginatedResponse<ApiArticle>>>(
-        `/members/${memberId}/articles`,
-        { params }
-      );
+      const { data } = await apiClient.get<ApiResponse<PaginatedResponse<ApiArticle>>>(`/members/${memberId}/articles`, {
+        params,
+      });
       return data.data;
     },
     enabled: !!memberId,
   });
 };
 
-// 현재 로그인한 회원 정보 조회
 export const useCurrentMember = () => {
   return useQuery({
     queryKey: ['member', 'me'],
@@ -40,7 +36,6 @@ export const useCurrentMember = () => {
   });
 };
 
-// 회원 활성화
 export const useActivateMember = () => {
   const queryClient = useQueryClient();
 
@@ -56,7 +51,6 @@ export const useActivateMember = () => {
   });
 };
 
-// 프로필 수정
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
 
@@ -72,7 +66,6 @@ export const useUpdateProfile = () => {
   });
 };
 
-// 회원 검색 응답 타입
 interface MemberSearchResponse {
   articles: ApiMember[];
   pagination: {
@@ -83,7 +76,6 @@ interface MemberSearchResponse {
   };
 }
 
-// 회원 검색
 export const useSearchMembers = (query: string, params?: { page?: number; limit?: number }) => {
   return useQuery({
     queryKey: ['members', 'search', query, params],

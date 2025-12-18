@@ -1,21 +1,13 @@
-import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import type { ApiCategory } from '@/lib/api/types.ts';
-import { MarkdownToolbar } from '@/components/write/MarkdownToolbar.tsx';
-import { MarkdownRenderer } from '@/components/markdown/MarkdownRenderer.tsx';
-import { AuthorSelector, type Author } from '@/components/write/AuthorSelector.tsx';
-import { useMarkdownEditor } from '@/hooks/write/useMarkdownEditor.ts';
-import { useAuth } from '@/hooks/auth/useAuth.ts';
-import { useCreateArticle } from '@/api';
+import type { ApiCategory } from '@/lib/api/types';
+import { MarkdownToolbar } from '@/components/write/MarkdownToolbar';
+import { MarkdownRenderer } from '@/components/markdown/MarkdownRenderer';
+import { AuthorSelector, type Author } from '@/components/write/AuthorSelector';
+import { useMarkdownEditor } from '@/hooks/write/useMarkdownEditor';
+import { useWriteForm } from '@/hooks/write/useWriteForm';
+import { useAuth } from '@/hooks/auth/useAuth';
+import { API_CATEGORIES } from '@/constants';
 import ImageIcon from '@/assets/icons/image.svg?react';
-
-const API_CATEGORIES: { label: string; value: ApiCategory }[] = [
-  { label: '개발', value: 'DEVELOPMENT' },
-  { label: '인프라', value: 'INFRA' },
-  { label: '디자인', value: 'DESIGN' },
-  { label: '프로덕트', value: 'PRODUCT' },
-];
+import * as S from './Write.style';
 
 export const Write = () => {
   const { user } = useAuth();
@@ -28,17 +20,26 @@ export const Write = () => {
 };
 
 const WriteForm = ({ currentUser }: { currentUser: Author }) => {
-  const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [title, setTitle] = useState('');
-  const [authors, setAuthors] = useState<Author[]>([currentUser]);
-  const [category, setCategory] = useState<ApiCategory>('DEVELOPMENT');
-  const [tags, setTags] = useState('');
-  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-  const [thumbnailPreview, setThumbnailPreview] = useState('');
-  const [content, setContent] = useState('');
-
-  const createArticle = useCreateArticle();
+  const {
+    fileInputRef,
+    title,
+    setTitle,
+    authors,
+    setAuthors,
+    category,
+    setCategory,
+    tags,
+    setTags,
+    thumbnailPreview,
+    content,
+    setContent,
+    canSubmit,
+    isPending,
+    handleThumbnailUpload,
+    clearThumbnail,
+    triggerThumbnailUpload,
+    handleSubmit,
+  } = useWriteForm(currentUser);
 
   const {
     textareaRef,
@@ -49,65 +50,22 @@ const WriteForm = ({ currentUser }: { currentUser: Author }) => {
     triggerImageUpload,
   } = useMarkdownEditor(content, setContent);
 
-  const canSubmit = title.trim() && authors.length > 0 && content.trim() && thumbnailFile && !createArticle.isPending;
-
-  const handleThumbnailUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setThumbnailFile(file);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setThumbnailPreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!canSubmit || !thumbnailFile) return;
-
-    const articleData = {
-      title: title.trim(),
-      authorIds: authors.map(a => a.id),
-      content: content,
-      category,
-      tags: tags.split(',').map(t => t.trim()).filter(Boolean),
-    };
-
-    try {
-      const result = await createArticle.mutateAsync({
-        article: articleData,
-        thumbnail: thumbnailFile,
-      });
-      alert('글이 작성되었습니다!');
-      navigate(`/article/${result.id}`);
-    } catch (err) {
-      console.error('Failed to create article:', err);
-      alert('글 작성에 실패했습니다.');
-    }
-  };
-
   return (
-    <Container>
-      <Header>
-        <Title>새 글 작성</Title>
-        <ButtonGroup>
-          <SubmitButton
-            type="button"
-            onClick={handleSubmit}
-            disabled={!canSubmit}
-          >
-            {createArticle.isPending ? '저장 중...' : '저장'}
-          </SubmitButton>
-        </ButtonGroup>
-      </Header>
+    <S.Container>
+      <S.Header>
+        <S.Title>새 글 작성</S.Title>
+        <S.ButtonGroup>
+          <S.SubmitButton type="button" onClick={handleSubmit} disabled={!canSubmit}>
+            {isPending ? '저장 중...' : '저장'}
+          </S.SubmitButton>
+        </S.ButtonGroup>
+      </S.Header>
 
-      <Form onSubmit={handleSubmit}>
-        <FormRow>
-          <FormGroup $flex={2}>
-            <Label htmlFor="title">제목 *</Label>
-            <Input
+      <S.Form onSubmit={handleSubmit}>
+        <S.FormRow>
+          <S.FormGroup $flex={2}>
+            <S.Label htmlFor="title">제목 *</S.Label>
+            <S.Input
               id="title"
               type="text"
               placeholder="글 제목을 입력하세요"
@@ -115,44 +73,38 @@ const WriteForm = ({ currentUser }: { currentUser: Author }) => {
               onChange={(e) => setTitle(e.target.value)}
               autoFocus
             />
-          </FormGroup>
-          <FormGroup $flex={1}>
-            <Label htmlFor="category">카테고리 *</Label>
-            <Select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value as ApiCategory)}
-            >
+          </S.FormGroup>
+          <S.FormGroup $flex={1}>
+            <S.Label htmlFor="category">카테고리 *</S.Label>
+            <S.Select id="category" value={category} onChange={(e) => setCategory(e.target.value as ApiCategory)}>
               {API_CATEGORIES.map((cat) => (
-                <option key={cat.value} value={cat.value}>{cat.label}</option>
+                <option key={cat.value} value={cat.value}>
+                  {cat.label}
+                </option>
               ))}
-            </Select>
-          </FormGroup>
-        </FormRow>
+            </S.Select>
+          </S.FormGroup>
+        </S.FormRow>
 
-        <FormRow>
-          <FormGroup $flex={1}>
-            <Label>작성자</Label>
-            <AuthorSelector
-              authors={authors}
-              onChange={setAuthors}
-              currentUser={currentUser}
-            />
-          </FormGroup>
-          <FormGroup $flex={1}>
-            <Label htmlFor="tags">태그 (쉼표로 구분)</Label>
-            <Input
+        <S.FormRow>
+          <S.FormGroup $flex={1}>
+            <S.Label>작성자</S.Label>
+            <AuthorSelector authors={authors} onChange={setAuthors} currentUser={currentUser} />
+          </S.FormGroup>
+          <S.FormGroup $flex={1}>
+            <S.Label htmlFor="tags">태그 (쉼표로 구분)</S.Label>
+            <S.Input
               id="tags"
               type="text"
               placeholder="springboot, react, devops"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
             />
-          </FormGroup>
-        </FormRow>
+          </S.FormGroup>
+        </S.FormRow>
 
-        <FormGroup>
-          <Label>썸네일 이미지</Label>
+        <S.FormGroup>
+          <S.Label>썸네일 이미지</S.Label>
           <input
             ref={fileInputRef}
             type="file"
@@ -161,29 +113,29 @@ const WriteForm = ({ currentUser }: { currentUser: Author }) => {
             style={{ display: 'none' }}
           />
           {thumbnailPreview ? (
-            <ThumbnailPreview>
-              <ThumbnailImage src={thumbnailPreview} alt="썸네일 미리보기" />
-              <ThumbnailOverlay>
-                <ThumbnailButton type="button" onClick={() => fileInputRef.current?.click()}>
+            <S.ThumbnailPreview>
+              <S.ThumbnailImage src={thumbnailPreview} alt="썸네일 미리보기" />
+              <S.ThumbnailOverlay>
+                <S.ThumbnailButton type="button" onClick={triggerThumbnailUpload}>
                   변경
-                </ThumbnailButton>
-                <ThumbnailButton type="button" onClick={() => { setThumbnailFile(null); setThumbnailPreview(''); }}>
+                </S.ThumbnailButton>
+                <S.ThumbnailButton type="button" onClick={clearThumbnail}>
                   삭제
-                </ThumbnailButton>
-              </ThumbnailOverlay>
-            </ThumbnailPreview>
+                </S.ThumbnailButton>
+              </S.ThumbnailOverlay>
+            </S.ThumbnailPreview>
           ) : (
-            <ImageUploadArea onClick={() => fileInputRef.current?.click()}>
-              <UploadIcon>
+            <S.ImageUploadArea onClick={triggerThumbnailUpload}>
+              <S.UploadIcon>
                 <ImageIcon />
-              </UploadIcon>
-              <UploadText>클릭하여 이미지 업로드</UploadText>
-            </ImageUploadArea>
+              </S.UploadIcon>
+              <S.UploadText>클릭하여 이미지 업로드</S.UploadText>
+            </S.ImageUploadArea>
           )}
-        </FormGroup>
+        </S.FormGroup>
 
-        <EditorSection>
-          <Label>본문</Label>
+        <S.EditorSection>
+          <S.Label>본문</S.Label>
           <input
             ref={imageInputRef}
             type="file"
@@ -191,399 +143,35 @@ const WriteForm = ({ currentUser }: { currentUser: Author }) => {
             onChange={handleContentImageUpload}
             style={{ display: 'none' }}
           />
-          <EditorWrapper>
-            <EditorPane>
-              <PaneHeader>편집</PaneHeader>
+          <S.EditorWrapper>
+            <S.EditorPane>
+              <S.PaneHeader>편집</S.PaneHeader>
               <MarkdownToolbar
                 onInsert={handleToolbarAction}
                 onImageUpload={triggerImageUpload}
                 isUploading={isUploadingImage}
               />
-              <Textarea
+              <S.Textarea
                 ref={textareaRef}
                 id="content"
-                placeholder="마크다운으로 글을 작성하세요..."
+                placeholder="아티클을 작성하세요..."
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
               />
-            </EditorPane>
-            <PreviewPane>
-              <PaneHeader>미리보기</PaneHeader>
-              <PreviewContent>
+            </S.EditorPane>
+            <S.PreviewPane>
+              <S.PaneHeader>미리보기</S.PaneHeader>
+              <S.PreviewContent>
                 {content ? (
                   <MarkdownRenderer content={content} />
                 ) : (
-                  <PlaceholderText>마크다운을 작성하면 미리보기가 표시됩니다</PlaceholderText>
+                  <S.PlaceholderText>마크다운을 작성하면 미리보기가 표시됩니다</S.PlaceholderText>
                 )}
-              </PreviewContent>
-            </PreviewPane>
-          </EditorWrapper>
-        </EditorSection>
-      </Form>
-    </Container>
+              </S.PreviewContent>
+            </S.PreviewPane>
+          </S.EditorWrapper>
+        </S.EditorSection>
+      </S.Form>
+    </S.Container>
   );
 };
-
-const Container = styled.div`
-  max-width: 1400px;
-  margin: 0 auto;
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-`;
-
-const Title = styled.h1`
-  font-size: ${({ theme }) => theme.fontSizes.xxl};
-  font-weight: 800;
-  color: ${({ theme }) => theme.colors.text};
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-const SubmitButton = styled.button`
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg}`};
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  font-weight: 600;
-  color: white;
-  background-color: ${({ theme }) => theme.colors.primary};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  transition: all 0.2s ease;
-
-  &:hover:not(:disabled) {
-    background-color: ${({ theme }) => theme.colors.primaryHover};
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.lg};
-`;
-
-const FormRow = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing.lg};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    flex-direction: column;
-  }
-`;
-
-const FormGroup = styled.div<{ $flex?: number }>`
-  flex: ${({ $flex }) => $flex || 1};
-  display: flex;
-  flex-direction: column;
-`;
-
-const Label = styled.label`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.text};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
-`;
-
-const Input = styled.input`
-  padding: ${({ theme }) => theme.spacing.md};
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  color: ${({ theme }) => theme.colors.text};
-  background-color: ${({ theme }) => theme.colors.categoryBg};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  outline: none;
-  transition: border-color 0.2s ease;
-
-  &::placeholder {
-    color: ${({ theme }) => theme.colors.textTertiary};
-  }
-
-  &:focus {
-    border-color: ${({ theme }) => theme.colors.primary};
-  }
-`;
-
-const Select = styled.select`
-  padding: ${({ theme }) => theme.spacing.md};
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  color: ${({ theme }) => theme.colors.text};
-  background-color: ${({ theme }) => theme.colors.categoryBg};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.2s ease;
-
-  &:focus {
-    border-color: ${({ theme }) => theme.colors.primary};
-  }
-`;
-
-const ImageUploadArea = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.md};
-  padding: ${({ theme }) => theme.spacing.md};
-  background-color: ${({ theme }) => theme.colors.categoryBg};
-  border: 2px dashed ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: fit-content;
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary};
-    background-color: ${({ theme }) => theme.colors.background};
-  }
-`;
-
-const UploadIcon = styled.div`
-  color: ${({ theme }) => theme.colors.textTertiary};
-  display: flex;
-  align-items: center;
-`;
-
-const UploadText = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.textTertiary};
-`;
-
-const ThumbnailPreview = styled.div`
-  position: relative;
-  width: 100%;
-  max-width: 400px;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  overflow: hidden;
-
-  &:hover div {
-    opacity: 1;
-  }
-`;
-
-const ThumbnailImage = styled.img`
-  width: 100%;
-  height: auto;
-  display: block;
-`;
-
-const ThumbnailOverlay = styled.div`
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  opacity: 0;
-  transition: opacity 0.2s ease;
-`;
-
-const ThumbnailButton = styled.button`
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  font-weight: 500;
-  color: white;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-  }
-`;
-
-const EditorSection = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const EditorWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: ${({ theme }) => theme.spacing.md};
-  min-height: 500px;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const EditorPane = styled.div`
-  display: flex;
-  flex-direction: column;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  overflow: hidden;
-`;
-
-const PreviewPane = styled.div`
-  display: flex;
-  flex-direction: column;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  overflow: hidden;
-`;
-
-const PaneHeader = styled.div`
-  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  background-color: ${({ theme }) => theme.colors.categoryBg};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-`;
-
-const Textarea = styled.textarea`
-  flex: 1;
-  padding: ${({ theme }) => theme.spacing.md};
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  font-family: 'Fira Code', 'Consolas', monospace;
-  color: ${({ theme }) => theme.colors.text};
-  background-color: ${({ theme }) => theme.colors.background};
-  border: none;
-  outline: none;
-  resize: none;
-  line-height: 1.6;
-
-  &::placeholder {
-    color: ${({ theme }) => theme.colors.textTertiary};
-  }
-`;
-
-const PreviewContent = styled.div`
-  flex: 1;
-  padding: ${({ theme }) => theme.spacing.md};
-  overflow-y: auto;
-  background-color: ${({ theme }) => theme.colors.background};
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  line-height: 1.8;
-  color: ${({ theme }) => theme.colors.text};
-
-  h1 {
-    font-size: ${({ theme }) => theme.fontSizes.xxl};
-    font-weight: 700;
-    margin: ${({ theme }) => theme.spacing.lg} 0 ${({ theme }) => theme.spacing.md};
-  }
-
-  h2 {
-    font-size: ${({ theme }) => theme.fontSizes.xl};
-    font-weight: 700;
-    margin: ${({ theme }) => theme.spacing.md} 0 ${({ theme }) => theme.spacing.sm};
-  }
-
-  h3 {
-    font-size: ${({ theme }) => theme.fontSizes.lg};
-    font-weight: 600;
-    margin: ${({ theme }) => theme.spacing.md} 0 ${({ theme }) => theme.spacing.sm};
-  }
-
-  p {
-    margin-bottom: ${({ theme }) => theme.spacing.md};
-  }
-
-  ul, ol {
-    margin: ${({ theme }) => theme.spacing.md} 0;
-    padding-left: ${({ theme }) => theme.spacing.xl};
-  }
-
-  li {
-    margin-bottom: ${({ theme }) => theme.spacing.xs};
-  }
-
-  ul li {
-    list-style: disc;
-  }
-
-  ol li {
-    list-style: decimal;
-  }
-
-  code {
-    background-color: ${({ theme }) => theme.colors.categoryBg};
-    padding: 2px 6px;
-    border-radius: ${({ theme }) => theme.borderRadius.sm};
-    font-family: 'Fira Code', 'Consolas', monospace;
-    font-size: 0.9em;
-  }
-
-  pre {
-    margin: ${({ theme }) => theme.spacing.md} 0;
-    border-radius: ${({ theme }) => theme.borderRadius.md};
-    overflow-x: auto;
-
-    > div {
-      border-radius: ${({ theme }) => theme.borderRadius.md} !important;
-      margin: 0 !important;
-    }
-
-    code {
-      background: none;
-      padding: 0;
-    }
-  }
-
-  blockquote {
-    position: relative;
-    padding-left: ${({ theme }) => theme.spacing.lg};
-    margin: ${({ theme }) => theme.spacing.md} 0;
-    color: ${({ theme }) => theme.colors.textSecondary};
-    font-style: italic;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background-color: ${({ theme }) => theme.colors.primary};
-      border-radius: 4px;
-    }
-  }
-
-  a {
-    color: ${({ theme }) => theme.colors.primary};
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  img {
-    max-width: 100%;
-    border-radius: ${({ theme }) => theme.borderRadius.md};
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: ${({ theme }) => theme.spacing.md} 0;
-  }
-
-  th, td {
-    border: 1px solid ${({ theme }) => theme.colors.border};
-    padding: ${({ theme }) => theme.spacing.sm};
-    text-align: left;
-  }
-
-  th {
-    background-color: ${({ theme }) => theme.colors.categoryBg};
-    font-weight: 600;
-  }
-`;
-
-const PlaceholderText = styled.div`
-  color: ${({ theme }) => theme.colors.textTertiary};
-  font-style: italic;
-`;

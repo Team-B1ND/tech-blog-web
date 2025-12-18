@@ -1,8 +1,15 @@
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client.ts';
-import type {ApiResponse, ApiArticle, ApiPopularArticle, PaginatedResponse, ArticleListParams, ArticleSearchParams, ApiCategory,} from '@/lib/api/types.ts';
+import { apiClient } from '@/lib/api/client';
+import type {
+  ApiResponse,
+  ApiArticle,
+  ApiPopularArticle,
+  PaginatedResponse,
+  ArticleListParams,
+  ArticleSearchParams,
+  ApiCategory,
+} from '@/lib/api/types';
 
-// 글 작성 요청 타입
 export interface CreateArticleRequest {
   title: string;
   authorIds: string[];
@@ -11,34 +18,27 @@ export interface CreateArticleRequest {
   content: string;
 }
 
-// 파일 업로드 응답 타입
 interface FileUploadResponse {
   url: string;
 }
 
-// 글 목록 조회
 export const useArticles = (params?: ArticleListParams) => {
   return useQuery({
     queryKey: ['articles', 'list', params?.category ?? 'all', params?.page ?? 1, params?.limit ?? 10],
     queryFn: async () => {
-      const { data } = await apiClient.get<ApiResponse<PaginatedResponse<ApiArticle>>>(
-        '/articles',
-        { params }
-      );
+      const { data } = await apiClient.get<ApiResponse<PaginatedResponse<ApiArticle>>>('/articles', { params });
       return data.data;
     },
   });
 };
 
-// 글 목록 무한 스크롤
 export const useInfiniteArticles = (params?: Omit<ArticleListParams, 'page'>) => {
   return useInfiniteQuery({
     queryKey: ['articles', 'infinite', params],
     queryFn: async ({ pageParam = 1 }) => {
-      const { data } = await apiClient.get<ApiResponse<PaginatedResponse<ApiArticle>>>(
-        '/articles',
-        { params: { ...params, page: pageParam } }
-      );
+      const { data } = await apiClient.get<ApiResponse<PaginatedResponse<ApiArticle>>>('/articles', {
+        params: { ...params, page: pageParam },
+      });
       return data.data;
     },
     initialPageParam: 1,
@@ -49,7 +49,6 @@ export const useInfiniteArticles = (params?: Omit<ArticleListParams, 'page'>) =>
   });
 };
 
-// 글 상세 조회
 export const useArticle = (id: string | number) => {
   return useQuery({
     queryKey: ['article', id],
@@ -61,36 +60,27 @@ export const useArticle = (id: string | number) => {
   });
 };
 
-// 인기 글 목록
 export const usePopularArticles = (limit?: number) => {
   return useQuery({
     queryKey: ['articles', 'popular', limit],
     queryFn: async () => {
-      const { data } = await apiClient.get<ApiResponse<ApiPopularArticle[]>>(
-        '/articles/popular',
-        { params: { limit } }
-      );
+      const { data } = await apiClient.get<ApiResponse<ApiPopularArticle[]>>('/articles/popular', { params: { limit } });
       return data.data;
     },
   });
 };
 
-// 글 검색
 export const useSearchArticles = (params: ArticleSearchParams) => {
   return useQuery({
     queryKey: ['articles', 'search', params],
     queryFn: async () => {
-      const { data } = await apiClient.get<ApiResponse<PaginatedResponse<ApiArticle>>>(
-        '/articles/search',
-        { params }
-      );
+      const { data } = await apiClient.get<ApiResponse<PaginatedResponse<ApiArticle>>>('/articles/search', { params });
       return data.data;
     },
     enabled: !!params.q,
   });
 };
 
-// 글 작성
 export const useCreateArticle = () => {
   const queryClient = useQueryClient();
 
@@ -112,7 +102,6 @@ export const useCreateArticle = () => {
   });
 };
 
-// 이미지 업로드
 export const useUploadImage = () => {
   return useMutation({
     mutationFn: async (file: File) => {
