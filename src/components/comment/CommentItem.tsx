@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import type { Comment, CommentInput } from '../../types/comment.ts';
-import CommentForm from './CommentForm.tsx';
+import type { Comment, CommentInput } from '@/types/comment';
+import CommentForm from './CommentForm';
 
 interface CommentItemProps {
   comment: Comment;

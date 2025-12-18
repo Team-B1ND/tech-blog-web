@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '../../lib/api/client';
+import { apiClient } from '@/lib/api/client';
 import type {
   ApiResponse,
   ApiAuthor,
   ApiArticle,
   PaginatedResponse,
-} from '../../lib/api/types';
+} from '@/lib/api/types';
 
 // 작성자 정보 조회
 export const useAuthor = (id: string) => {

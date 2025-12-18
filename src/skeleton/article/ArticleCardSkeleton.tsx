@@ -1,4 +1,5 @@
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css } from 'styled-components';
+import { Skeleton } from '@/components/common/Skeleton.tsx';
 
 interface ArticleCardSkeletonProps {
   variant?: 'list' | 'block';
@@ -17,27 +18,6 @@ export const ArticleCardSkeleton = ({ variant = 'list' }: ArticleCardSkeletonPro
     </Card>
   );
 };
-
-const shimmer = keyframes`
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-`;
-
-const SkeletonBase = styled.div`
-  background: linear-gradient(
-    90deg,
-    ${({ theme }) => theme.colors.categoryBg} 25%,
-    ${({ theme }) => theme.colors.border} 50%,
-    ${({ theme }) => theme.colors.categoryBg} 75%
-  );
-  background-size: 200% 100%;
-  animation: ${shimmer} 1.5s infinite;
-  border-radius: ${({ theme }) => theme.borderRadius.sm};
-`;
 
 const Card = styled.div<{ $variant: 'list' | 'block' }>`
   display: flex;
@@ -62,7 +42,7 @@ const Card = styled.div<{ $variant: 'list' | 'block' }>`
         `}
 `;
 
-const ThumbnailSkeleton = styled(SkeletonBase)<{ $variant: 'list' | 'block' }>`
+const ThumbnailSkeleton = styled(Skeleton)<{ $variant: 'list' | 'block' }>`
   flex-shrink: 0;
 
   ${({ $variant, theme }) =>
@@ -96,19 +76,19 @@ const Content = styled.div<{ $variant: 'list' | 'block' }>`
     `}
 `;
 
-const CategorySkeleton = styled(SkeletonBase)`
+const CategorySkeleton = styled(Skeleton)`
   width: 50px;
   height: 20px;
   margin-bottom: ${({ theme }) => theme.spacing.sm};
 `;
 
-const TitleSkeleton = styled(SkeletonBase)<{ $short?: boolean }>`
+const TitleSkeleton = styled(Skeleton)<{ $short?: boolean }>`
   width: ${({ $short }) => ($short ? '60%' : '90%')};
   height: 24px;
   margin-bottom: ${({ theme }) => theme.spacing.sm};
 `;
 
-const MetaSkeleton = styled(SkeletonBase)`
+const MetaSkeleton = styled(Skeleton)`
   width: 120px;
   height: 16px;
   margin-top: auto;

@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAuth } from '../hooks/useAuth';
-import DodamIcon from '../assets/Dodam Face.svg?react';
+import { useAuth } from '@/hooks/useAuth';
+import DodamIcon from '@/assets/Dodam Face.svg?react';
 
 const OAUTH_URL = `${import.meta.env.VITE_API_URL}/oauth2/authorization/dauth`;
 

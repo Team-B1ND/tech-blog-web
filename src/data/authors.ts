@@ -1,5 +1,5 @@
-import type { Author } from '../types/author';
-import type { Article } from '../types/article';
+import type { Author } from '@/types/author';
+import type { Article } from '@/types/article';
 import { articles } from './articles';
 
 export const authors: Author[] = [

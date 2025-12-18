@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../../lib/api';
-import type { ApiResponse } from '../../lib/api';
+import { apiClient } from '@/lib/api';
+import type { ApiResponse } from '@/lib/api';
 
 // 로그인 URL 정보
 interface LoginInfo {

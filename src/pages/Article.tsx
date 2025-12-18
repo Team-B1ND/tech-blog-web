@@ -1,15 +1,47 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { useArticle } from '../hooks/api';
-import { mapApiArticle } from '../lib/api/mappers';
-import { categoryDisplayName } from '../types/article';
-import { useSearch } from '../contexts/SearchContext';
-import { MarkdownRenderer } from '../components/common/MarkdownRenderer';
-import CommentSection from '../components/comment/CommentSection.tsx';
-import { ViewSpan } from '../components/article/ViewSpan.tsx';
-import LinkIcon from '../assets/icons/link.svg?react';
-import { NotFound } from './NotFound.tsx';
+import { useArticle } from '@/hooks/api';
+import { mapApiArticle } from '@/lib/api/mappers';
+import { categoryDisplayName } from '@/types/article';
+import { useSearch } from '@/contexts/SearchContext';
+import { MarkdownRenderer } from '@/components/common/MarkdownRenderer';
+import { Skeleton } from '@/components/common/Skeleton';
+import CommentSection from '@/components/comment/CommentSection';
+import { ViewSpan } from '@/components/article/ViewSpan';
+import LinkIcon from '@/assets/icons/link.svg?react';
+import { NotFound } from '@/pages/NotFound';
+
+const ArticleSkeleton = () => (
+  <>
+    <ArticleHeader>
+      <SkeletonTitle />
+      <SkeletonTitleSecond />
+      <Meta>
+        <SkeletonMeta $width={80} />
+        <SkeletonMeta $width={100} />
+        <SkeletonMeta $width={60} />
+      </Meta>
+      <TagsRow>
+        <SkeletonTag $width={70} />
+        <SkeletonTag $width={50} />
+        <SkeletonTag $width={60} />
+      </TagsRow>
+    </ArticleHeader>
+    <SkeletonContent>
+      <SkeletonParagraph />
+      <SkeletonParagraph $width="95%" />
+      <SkeletonParagraph $width="88%" />
+      <SkeletonParagraph $width="92%" />
+      <SkeletonParagraph $width="70%" />
+      <SkeletonHeading />
+      <SkeletonParagraph />
+      <SkeletonParagraph $width="85%" />
+      <SkeletonParagraph $width="90%" />
+      <SkeletonParagraph $width="60%" />
+    </SkeletonContent>
+  </>
+);
 
 const Article = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,7 +62,7 @@ const Article = () => {
   if (isLoading) {
     return (
       <ArticleWrapper>
-        <LoadingState>글을 불러오는 중...</LoadingState>
+        <ArticleSkeleton />
       </ArticleWrapper>
     );
   }
@@ -92,13 +124,6 @@ export default Article;
 const ArticleWrapper = styled.article`
   max-width: 720px;
   margin: 0 auto;
-`;
-
-const LoadingState = styled.div`
-  text-align: center;
-  padding: ${({ theme }) => theme.spacing.xxxl} 0;
-  color: ${({ theme }) => theme.colors.textTertiary};
-  font-size: ${({ theme }) => theme.fontSizes.md};
 `;
 
 const ArticleHeader = styled.header`
@@ -374,4 +399,54 @@ const ShareButton = styled.button<{ $copied: boolean }>`
 
 const BackArrow = styled.span`
   font-size: ${({ theme }) => theme.fontSizes.lg};
+`;
+
+// Skeleton styles
+const SkeletonTitle = styled(Skeleton)`
+  height: 40px;
+  width: 90%;
+  margin-bottom: ${({ theme }) => theme.spacing.sm};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    height: 32px;
+  }
+`;
+
+const SkeletonTitleSecond = styled(Skeleton)`
+  height: 40px;
+  width: 60%;
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    height: 32px;
+  }
+`;
+
+const SkeletonMeta = styled(Skeleton)<{ $width: number }>`
+  height: 18px;
+  width: ${({ $width }) => $width}px;
+`;
+
+const SkeletonTag = styled(Skeleton)<{ $width: number }>`
+  height: 24px;
+  width: ${({ $width }) => $width}px;
+  border-radius: ${({ theme }) => theme.borderRadius.full};
+`;
+
+const SkeletonContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.md};
+  margin-top: ${({ theme }) => theme.spacing.xl};
+`;
+
+const SkeletonHeading = styled(Skeleton)`
+  height: 28px;
+  width: 50%;
+  margin-top: ${({ theme }) => theme.spacing.lg};
+`;
+
+const SkeletonParagraph = styled(Skeleton)<{ $width?: string }>`
+  height: 20px;
+  width: ${({ $width }) => $width || '100%'};
 `;

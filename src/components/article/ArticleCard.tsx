@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import type { Article } from '../../types/article.ts';
-import { categoryDisplayName } from '../../types/article.ts';
+import type { Article } from '@/types/article';
+import { categoryDisplayName } from '@/types/article';
 
 interface ArticleCardProps {
   article: Article;

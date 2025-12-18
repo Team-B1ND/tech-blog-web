@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import type { CommentInput } from '../../types/comment.ts';
+import type { CommentInput } from '@/types/comment';
 
 interface CommentFormProps {
   onSubmit: (comment: CommentInput) => void;

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { useAuth } from '../hooks/useAuth';
-import { getArticlesByAuthor } from '../data/authors';
-import { ArticleCard } from '../components/article/ArticleCard';
+import { useAuth } from '@/hooks/useAuth';
+import { getArticlesByAuthor } from '@/data/authors';
+import { ArticleCard } from '@/components/article/ArticleCard';
 
 export const Dashboard = () => {
   const { user } = useAuth();

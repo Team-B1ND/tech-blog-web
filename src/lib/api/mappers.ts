@@ -1,4 +1,4 @@
-import type { Article, Category } from '../../types/article';
+import type { Article, Category } from '@/types/article';
 import type { ApiArticle } from './types';
 
 // API Article → 프론트엔드 Article (카테고리는 그대로 사용)

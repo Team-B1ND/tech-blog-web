@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import ChevronLeftIcon from '../../assets/icons/chevron-left.svg?react';
-import ChevronRightIcon from '../../assets/icons/chevron-right.svg?react';
+import ChevronLeftIcon from '@/assets/icons/chevron-left.svg?react';
+import ChevronRightIcon from '@/assets/icons/chevron-right.svg?react';
 
 interface PaginationProps {
   currentPage: number;

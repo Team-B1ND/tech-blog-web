@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { categories, categoryToSlug, categoryDisplayName } from '../../types/article';
-import type { Category } from '../../types/article';
+import { categories, categoryToSlug, categoryDisplayName } from '@/types/article';
+import type { Category } from '@/types/article';
 
 interface CategoryFilterProps {
   selectedCategory: Category;

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useSubscribe } from '../hooks/api';
-import CheckIcon from '../assets/icons/check.svg?react';
+import { useSubscribe } from '@/hooks/api';
+import CheckIcon from '@/assets/icons/check.svg?react';
 
 export const Subscribe = () => {
   const navigate = useNavigate();

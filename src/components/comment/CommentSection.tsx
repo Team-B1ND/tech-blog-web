@@ -1,10 +1,10 @@
 import styled from 'styled-components';
-import type { CommentInput } from '../../types/comment.ts';
-import { useComments, useCreateComment } from '../../hooks/api';
-import { apiClient } from '../../lib/api/client';
+import type { CommentInput } from '@/types/comment';
+import { useComments, useCreateComment } from '@/hooks/api';
+import { apiClient } from '@/lib/api/client';
 import { useQueryClient } from '@tanstack/react-query';
-import CommentForm from './CommentForm.tsx';
-import CommentItem from './CommentItem.tsx';
+import CommentForm from './CommentForm';
+import CommentItem from './CommentItem';
 
 interface CommentSectionProps {
   articleId: string;

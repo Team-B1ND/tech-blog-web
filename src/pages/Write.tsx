@@ -1,16 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import type { Category } from '../types/article';
-import { categories } from '../types/article';
-import { MarkdownToolbar } from '../components/write/MarkdownToolbar';
-import { MarkdownRenderer } from '../components/common/MarkdownRenderer';
-import { useMarkdownEditor } from '../hooks/write/useMarkdownEditor.ts';
-import { useAuth } from '../hooks/useAuth';
-import ImageIcon from '../assets/icons/image.svg?react';
+import type { Category } from '@/types/article';
+import { categories } from '@/types/article';
+import { MarkdownToolbar } from '@/components/write/MarkdownToolbar';
+import { MarkdownRenderer } from '@/components/common/MarkdownRenderer';
+import { useMarkdownEditor } from '@/hooks/write/useMarkdownEditor';
+import { useAuth } from '@/hooks/useAuth';
+import ImageIcon from '@/assets/icons/image.svg?react';
 
 export const Write = () => {
-  const navigate = useNavigate();
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState('');

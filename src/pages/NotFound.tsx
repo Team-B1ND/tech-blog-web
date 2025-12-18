@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import Icon404 from '../assets/404.svg?react';
+import Icon404 from '@/assets/404.svg?react';
 
 
 export const NotFound = () => {

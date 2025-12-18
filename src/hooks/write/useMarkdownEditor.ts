@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
-import type { ToolbarAction } from '../../components/write/MarkdownToolbar.tsx';
+import type { ToolbarAction } from '@/components/write/MarkdownToolbar';
 
 export const useMarkdownEditor = (
   content: string,

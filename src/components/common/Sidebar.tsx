@@ -1,9 +1,29 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { usePopularArticles, useTags } from '../../hooks/api';
-import { mapApiArticles } from '../../lib/api/mappers';
-import { useSearch } from '../../contexts/SearchContext.tsx';
-import { ViewSpan } from '../article/ViewSpan.tsx';
+import { usePopularArticles, useTags } from '@/hooks/api';
+import { mapApiArticles } from '@/lib/api/mappers';
+import { useSearch } from '@/contexts/SearchContext';
+import { ViewSpan } from '@/components/article/ViewSpan';
+import { Skeleton } from '@/components/common/Skeleton';
+
+const PopularSkeleton = () => (
+  <PopularList>
+    {Array.from({ length: 5 }).map((_, i) => (
+      <SkeletonItem key={i}>
+        <SkeletonTitle $width={`${70 + Math.random() * 30}%`} />
+        <SkeletonViews />
+      </SkeletonItem>
+    ))}
+  </PopularList>
+);
+
+const TagsSkeleton = () => (
+  <TagList>
+    {Array.from({ length: 8 }).map((_, i) => (
+      <SkeletonTag key={i} $width={40 + Math.random() * 40} />
+    ))}
+  </TagList>
+);
 
 export const Sidebar = () => {
   const { data: popularData, isLoading: popularLoading } = usePopularArticles(5);
@@ -18,7 +38,7 @@ export const Sidebar = () => {
       <Section>
         <SectionTitle>지금 인기 글</SectionTitle>
         {popularLoading ? (
-          <LoadingText>불러오는 중...</LoadingText>
+          <PopularSkeleton />
         ) : popularArticles.length === 0 ? (
           <EmptyText>인기 글이 없습니다</EmptyText>
         ) : (
@@ -38,7 +58,7 @@ export const Sidebar = () => {
       <Section>
         <SectionTitle>태그</SectionTitle>
         {tagsLoading ? (
-          <LoadingText>불러오는 중...</LoadingText>
+          <TagsSkeleton />
         ) : tags.length === 0 ? (
           <EmptyText>태그가 없습니다</EmptyText>
         ) : (
@@ -132,14 +152,31 @@ const Tag = styled.span`
   }
 `;
 
-const LoadingText = styled.div`
+const EmptyText = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.sm};
   color: ${({ theme }) => theme.colors.textTertiary};
   padding: ${({ theme }) => theme.spacing.md} 0;
 `;
 
-const EmptyText = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.textTertiary};
-  padding: ${({ theme }) => theme.spacing.md} 0;
+const SkeletonItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.xs};
+  padding: ${({ theme }) => theme.spacing.sm};
+`;
+
+const SkeletonTitle = styled(Skeleton)<{ $width: string }>`
+  height: 16px;
+  width: ${({ $width }) => $width};
+`;
+
+const SkeletonViews = styled(Skeleton)`
+  height: 12px;
+  width: 50px;
+`;
+
+const SkeletonTag = styled(Skeleton)<{ $width: number }>`
+  height: 24px;
+  width: ${({ $width }) => $width}px;
+  border-radius: ${({ theme }) => theme.borderRadius.full};
 `;

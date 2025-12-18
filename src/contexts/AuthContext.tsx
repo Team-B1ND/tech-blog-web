@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useAuthInfo, useLogout } from '../hooks/api';
+import { useAuthInfo, useLogout } from '@/hooks/api';
 import { AuthContext } from './authTypes';
 import type { User } from './authTypes';
 

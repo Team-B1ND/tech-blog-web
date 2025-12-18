@@ -1,11 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useSearchArticles } from '../../hooks/api';
-import { mapApiArticles } from '../../lib/api/mappers';
-import { useSearch } from '../../contexts/SearchContext.tsx';
-import SearchIconSvg from '../../assets/icons/search.svg?react';
-import CloseIcon from '../../assets/icons/close.svg?react';
+import { useSearchModal } from '@/hooks/useSearchModal';
+import SearchIconSvg from '@/assets/icons/search.svg?react';
+import CloseIcon from '@/assets/icons/close.svg?react';
+import { SearchSkeleton } from '@/skeleton/search/SearchSkeleton.tsx';
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -13,45 +10,15 @@ interface SearchModalProps {
 }
 
 const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
-  const { initialQuery } = useSearch();
-  const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
-
-  // Debounce query
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(query.trim());
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [query]);
-
-  const { data, isLoading } = useSearchArticles({
-    q: debouncedQuery.length >= 2 ? debouncedQuery : '',
-  });
-
-  const results = data ? mapApiArticles(data.data) : [];
-
-  useEffect(() => {
-    if (isOpen) {
-      setQuery(initialQuery);
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
-  }, [isOpen, initialQuery]);
-
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, [onClose]);
-
-  const handleSelect = (articleId: string) => {
-    onClose();
-    navigate(`/article/${articleId}`);
-  };
+  const {
+    query,
+    inputRef,
+    results,
+    isLoading,
+    isQueryTooShort,
+    handleQueryChange,
+    handleSelect,
+  } = useSearchModal({ isOpen, onClose });
 
   if (!isOpen) return null;
 
@@ -67,7 +34,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
             type="text"
             placeholder="검색어를 입력하세요"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={handleQueryChange}
           />
           <CloseButton onClick={onClose}>
             <CloseIcon />
@@ -75,10 +42,10 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
         </SearchHeader>
 
         <SearchResults>
-          {query.trim().length < 2 ? (
+          {isQueryTooShort ? (
             <HintText>2글자 이상 입력해주세요</HintText>
           ) : isLoading ? (
-            <HintText>검색 중...</HintText>
+            <SearchSkeleton/>
           ) : results.length === 0 ? (
             <HintText>검색 결과가 없습니다</HintText>
           ) : (
