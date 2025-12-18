@@ -16,7 +16,6 @@ export const useSearchModal = ({ isOpen, onClose }: UseSearchModalParams) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  // Debounce query
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(query.trim());
@@ -32,8 +31,10 @@ export const useSearchModal = ({ isOpen, onClose }: UseSearchModalParams) => {
 
   useEffect(() => {
     if (isOpen) {
-      setQuery(initialQuery);
-      setTimeout(() => inputRef.current?.focus(), 100);
+      setTimeout(() => {
+        setQuery(initialQuery);
+        inputRef.current?.focus();
+      }, 100);
     }
   }, [isOpen, initialQuery]);
 
