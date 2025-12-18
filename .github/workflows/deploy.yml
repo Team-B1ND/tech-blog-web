@@ -1,0 +1,49 @@
+name: Deploy Tech Web
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Create .env
+        run: |
+          echo "${{ secrets.ENV }}" > .env
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      # 서버 디렉터리 준비
+      - name: Prepare server directory
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            sudo mkdir -p /var/lib/docker/volumes/tech/_data/main
+            sudo chown -R $USER:$USER /var/lib/docker/volumes/tech/_data
+
+      # 파일 전송
+      - name: Deploy to Docker volume
+        run: |
+          rsync -avz --delete \
+            -e "ssh -o StrictHostKeyChecking=no" \
+            ./dist/ \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/lib/docker/volumes/tech/_data/main
