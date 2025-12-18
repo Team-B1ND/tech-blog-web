@@ -7,7 +7,7 @@ import SearchModal from '@/components/search/SearchModal.tsx';
 import SearchIcon from '@/assets/icons/search.svg?react';
 import MoonIcon from '@/assets/icons/moon.svg?react';
 import SunIcon from '@/assets/icons/sun.svg?react';
-import LogoIcon from '@/assets/logo.svg?react';
+import LogoIcon from '@/assets/dodam/logo.svg?react';
 
 const Header = () => {
   const { mode, toggleTheme } = useTheme();

@@ -6,26 +6,11 @@ export const Hero = styled.section`
   margin-bottom: ${({ theme }) => theme.spacing.xxl};
 `;
 
-export const HeroTitle = styled.h1`
-  font-size: ${({ theme }) => theme.fontSizes.xxxl};
-  font-weight: 800;
-  color: ${({ theme }) => theme.colors.text};
-  line-height: 1.3;
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    font-size: ${({ theme }) => theme.fontSizes.xxl};
-  }
-`;
-
-export const HeroSubtitle = styled.p`
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-  color: ${({ theme }) => theme.colors.textSecondary};
-  line-height: 1.6;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    font-size: ${({ theme }) => theme.fontSizes.md};
-  }
+export const HeroBanner = styled.img`
+  width: 100%;
+  height: auto;
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  object-fit: cover;
 `;
 
 export const ContentWrapper = styled.div`

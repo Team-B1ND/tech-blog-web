@@ -5,6 +5,7 @@ import { CategoryFilter } from '@/components/filter/CategoryFilter';
 import { Sidebar } from '@/components/common/Sidebar';
 import { Pagination } from '@/components/common/Pagination';
 import { NotFound } from '@/pages/common/NotFound';
+import bannerImage from '@/assets/dodam/banner.png';
 import * as S from './Home.style';
 
 export const Home = () => {
@@ -35,8 +36,7 @@ export const Home = () => {
   return (
     <S.HomeContainer>
       <S.Hero>
-        <S.HeroTitle>B1ND 기술 블로그</S.HeroTitle>
-        <S.HeroSubtitle>B1ND 팀이 겪은 기술적 도전과 해결 과정을 모두에게 공유합니다</S.HeroSubtitle>
+        <S.HeroBanner src={bannerImage} alt="B1ND 기술 블로그" />
       </S.Hero>
 
       <S.ContentWrapper>

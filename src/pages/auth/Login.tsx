@@ -1,5 +1,5 @@
 import { useLoginPage } from '@/hooks/auth/useLoginPage';
-import DodamIcon from '@/assets/Dodam Face.svg?react';
+import DodamIcon from '@/assets/dodam/Dodam Face.svg?react';
 import * as S from './Login.style';
 
 export const Login = () => {

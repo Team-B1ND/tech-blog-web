@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Link, NavLink } from 'react-router-dom';
-import LogoIcon from '@/assets/logo.svg?react';
+import LogoIcon from '@/assets/dodam/logo.svg?react';
 
 export const Container = styled.div`
   min-height: 100vh;
