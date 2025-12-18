@@ -1,4 +1,3 @@
-// API 공통 응답 타입
 export interface ApiResponse<T> {
   message: string;
   status: number;
@@ -12,7 +11,6 @@ export interface ApiError {
   };
 }
 
-// 페이지네이션
 export interface Pagination {
   page: number;
   limit: number;
@@ -25,10 +23,8 @@ export interface PaginatedResponse<T> {
   pagination: Pagination;
 }
 
-// API 카테고리 (백엔드 enum)
 export type ApiCategory = 'DEVELOPMENT' | 'DESIGN' | 'PRODUCT' | 'INFRA';
 
-// Article API 타입
 export interface ApiArticleAuthor {
   id: string;
   name: string;
@@ -58,7 +54,6 @@ export interface ArticleSearchParams {
   limit?: number;
 }
 
-// Author API 타입
 export interface ApiAuthor {
   id: string;
   name: string;
@@ -71,13 +66,11 @@ export interface ApiAuthor {
   activated?: boolean;
 }
 
-// Tag API 타입
 export interface ApiTag {
   id: number;
   name: string;
 }
 
-// Comment API 타입
 export interface ApiComment {
   id: number;
   author: string;
@@ -91,7 +84,6 @@ export interface CommentCreateParams {
   content: string;
 }
 
-// Subscribe API 타입
 export interface SubscribeParams {
   name: string;
   email: string;

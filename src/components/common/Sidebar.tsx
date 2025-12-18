@@ -1,29 +1,11 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { usePopularArticles, useTags } from '@/hooks/api';
+import { usePopularArticles, useTags } from '@/api';
 import { mapApiArticles } from '@/lib/api/mappers';
 import { useSearch } from '@/contexts/SearchContext';
 import { ViewSpan } from '@/components/article/ViewSpan';
-import { Skeleton } from '@/skeleton/Skeleton.tsx';
-
-const PopularSkeleton = () => (
-  <PopularList>
-    {Array.from({ length: 5 }).map((_, i) => (
-      <SkeletonItem key={i}>
-        <SkeletonTitle $width={`${70 + Math.random() * 30}%`} />
-        <SkeletonViews />
-      </SkeletonItem>
-    ))}
-  </PopularList>
-);
-
-const TagsSkeleton = () => (
-  <TagList>
-    {Array.from({ length: 8 }).map((_, i) => (
-      <SkeletonTag key={i} $width={40 + Math.random() * 40} />
-    ))}
-  </TagList>
-);
+import {PopularSkeleton} from "@/skeleton/sidebar/PopularSkeleton.tsx";
+import {TagsSkeleton} from "@/skeleton/sidebar/TagsSkeleton.tsx";
 
 export const Sidebar = () => {
   const { data: popularData, isLoading: popularLoading } = usePopularArticles(5);
@@ -156,27 +138,4 @@ const EmptyText = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.sm};
   color: ${({ theme }) => theme.colors.textTertiary};
   padding: ${({ theme }) => theme.spacing.md} 0;
-`;
-
-const SkeletonItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.xs};
-  padding: ${({ theme }) => theme.spacing.sm};
-`;
-
-const SkeletonTitle = styled(Skeleton)<{ $width: string }>`
-  height: 16px;
-  width: ${({ $width }) => $width};
-`;
-
-const SkeletonViews = styled(Skeleton)`
-  height: 12px;
-  width: 50px;
-`;
-
-const SkeletonTag = styled(Skeleton)<{ $width: number }>`
-  height: 24px;
-  width: ${({ $width }) => $width}px;
-  border-radius: ${({ theme }) => theme.borderRadius.full};
 `;

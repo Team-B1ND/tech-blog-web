@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSearchArticles } from '@/hooks/api';
+import { useSearchArticles } from '@/api';
 import { mapApiArticles } from '@/lib/api/mappers';
 import { useSearch } from '@/contexts/SearchContext';
 

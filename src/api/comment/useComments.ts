@@ -1,8 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
-import type { ApiResponse, ApiComment, CommentCreateParams } from '@/lib/api/types';
+import { apiClient } from '@/lib/api/client.ts';
+import type { ApiResponse, ApiComment, CommentCreateParams } from '@/lib/api/types.ts';
 
-// 댓글 목록 조회
 export const useComments = (articleId: string | number) => {
   return useQuery({
     queryKey: ['comments', articleId],
@@ -16,7 +15,6 @@ export const useComments = (articleId: string | number) => {
   });
 };
 
-// 댓글 작성
 export const useCreateComment = (articleId: string | number) => {
   const queryClient = useQueryClient();
 
@@ -34,7 +32,6 @@ export const useCreateComment = (articleId: string | number) => {
   });
 };
 
-// 대댓글 작성
 export const useCreateReply = (articleId: string | number, commentId: number) => {
   const queryClient = useQueryClient();
 

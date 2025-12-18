@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAuth } from '@/hooks/useAuth.ts';
+import { useAuth } from '@/hooks/auth/useAuth.ts';
 
 export const ProfileEdit = () => {
   const navigate = useNavigate();

@@ -14,34 +14,31 @@ const CommentForm = ({ onSubmit, isReply = false, replyAuthor, onCancel, isSubmi
   const [author, setAuthor] = useState('');
   const [content, setContent] = useState('');
 
-  const effectiveAuthor = isReply && replyAuthor ? replyAuthor : author;
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!effectiveAuthor.trim() || !content.trim()) return;
+    if (!author.trim() || !content.trim()) return;
 
-    onSubmit({ author: effectiveAuthor.trim(), content: content.trim() });
-    if (!isReply) setAuthor('');
+    onSubmit({ author: author.trim(), content: content.trim() });
+    setAuthor('');
     setContent('');
   };
 
   return (
     <Form onSubmit={handleSubmit} $isReply={isReply}>
-      {isReply && replyAuthor ? (
-        <AuthorDisplay>
-          <AuthorLabel>작성자</AuthorLabel>
-          <AuthorName>{replyAuthor}</AuthorName>
-        </AuthorDisplay>
-      ) : (
-        <InputRow>
-          <AuthorInput
-            type="text"
-            placeholder="이름"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-          />
-        </InputRow>
+      {isReply && replyAuthor && (
+        <ReplyingTo>
+          <ReplyLabel>@{replyAuthor}</ReplyLabel>
+          <span>에게 답글</span>
+        </ReplyingTo>
       )}
+      <InputRow>
+        <AuthorInput
+          type="text"
+          placeholder="이름"
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+        />
+      </InputRow>
       <ContentTextarea
         placeholder={isReply ? '답글을 입력하세요' : '댓글을 입력하세요'}
         value={content}
@@ -54,7 +51,7 @@ const CommentForm = ({ onSubmit, isReply = false, replyAuthor, onCancel, isSubmi
             취소
           </CancelButton>
         )}
-        <SubmitButton type="submit" disabled={!effectiveAuthor.trim() || !content.trim() || isSubmitting}>
+        <SubmitButton type="submit" disabled={!author.trim() || !content.trim() || isSubmitting}>
           {isSubmitting ? '작성 중...' : isReply ? '답글 작성' : '댓글 작성'}
         </SubmitButton>
       </ButtonRow>
@@ -79,21 +76,17 @@ const InputRow = styled.div`
   gap: ${({ theme }) => theme.spacing.md};
 `;
 
-const AuthorDisplay = styled.div`
+const ReplyingTo = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-const AuthorLabel = styled.span`
+  gap: ${({ theme }) => theme.spacing.xs};
   font-size: ${({ theme }) => theme.fontSizes.sm};
   color: ${({ theme }) => theme.colors.textTertiary};
 `;
 
-const AuthorName = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
+const ReplyLabel = styled.span`
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.primary};
 `;
 
 const AuthorInput = styled.input`

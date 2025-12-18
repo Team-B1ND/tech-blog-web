@@ -1,12 +1,6 @@
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
-import type {
-  ApiResponse,
-  ApiArticle,
-  PaginatedResponse,
-  ArticleListParams,
-  ArticleSearchParams,
-} from '@/lib/api/types';
+import { apiClient } from '@/lib/api/client.ts';
+import type {ApiResponse, ApiArticle, PaginatedResponse, ArticleListParams, ArticleSearchParams,} from '@/lib/api/types.ts';
 
 // 글 목록 조회
 export const useArticles = (params?: ArticleListParams) => {

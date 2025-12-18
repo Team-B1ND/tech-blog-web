@@ -1,8 +1,8 @@
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAuthor, useAuthorArticles } from '@/hooks/api';
+import { useAuthor, useAuthorArticles } from '@/api';
 import { mapApiArticles } from '@/lib/api/mappers.ts';
-import { useAuth } from '@/hooks/useAuth.ts';
+import { useAuth } from '@/hooks/auth/useAuth.ts';
 import { ArticleCard } from '@/components/article/ArticleCard.tsx';
 import { Pagination } from '@/components/common/Pagination.tsx';
 import { NotFound } from '@/pages/common/NotFound.tsx';

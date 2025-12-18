@@ -2,7 +2,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import type { Category, CategorySlug } from '@/types/article.ts';
 import { slugToCategory, categoryToSlug } from '@/types/article.ts';
-import { useArticles } from '@/hooks/api';
+import { useArticles } from '@/api';
 import { mapApiArticles } from '@/lib/api/mappers.ts';
 import { ArticleCard } from '@/components/article/ArticleCard.tsx';
 import { ArticleCardSkeleton } from '@/skeleton/article/ArticleCardSkeleton.tsx';

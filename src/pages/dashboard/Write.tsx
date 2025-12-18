@@ -5,7 +5,7 @@ import { categories } from '@/types/article.ts';
 import { MarkdownToolbar } from '@/components/write/MarkdownToolbar.tsx';
 import { MarkdownRenderer } from '@/components/markdown/MarkdownRenderer.tsx';
 import { useMarkdownEditor } from '@/hooks/write/useMarkdownEditor.ts';
-import { useAuth } from '@/hooks/useAuth.ts';
+import { useAuth } from '@/hooks/auth/useAuth.ts';
 import ImageIcon from '@/assets/icons/image.svg?react';
 
 export const Write = () => {

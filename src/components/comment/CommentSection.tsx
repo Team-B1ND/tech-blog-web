@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import type { CommentInput } from '@/types/comment';
-import { useComments, useCreateComment } from '@/hooks/api';
+import { useComments, useCreateComment } from '@/api';
 import { apiClient } from '@/lib/api/client';
 import { useQueryClient } from '@tanstack/react-query';
 import CommentForm from './CommentForm';

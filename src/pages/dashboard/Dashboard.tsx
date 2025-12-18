@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useAuth } from '@/hooks/useAuth.ts';
+import { useAuth } from '@/hooks/auth/useAuth.ts';
 import { getArticlesByAuthor } from '@/data/authors.ts';
 import { ArticleCard } from '@/components/article/ArticleCard.tsx';
 

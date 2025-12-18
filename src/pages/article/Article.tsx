@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { useArticle } from '@/hooks/api';
+import { useArticle } from '@/api';
 import { mapApiArticle } from '@/lib/api/mappers.ts';
 import { categoryDisplayName } from '@/types/article.ts';
 import { useSearch } from '@/contexts/SearchContext.tsx';

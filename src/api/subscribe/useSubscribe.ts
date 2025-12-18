@@ -1,8 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
-import type { ApiResponse, SubscribeParams } from '@/lib/api/types';
+import { apiClient } from '@/lib/api/client.ts';
+import type { ApiResponse, SubscribeParams } from '@/lib/api/types.ts';
 
-// 뉴스레터 구독
 export const useSubscribe = () => {
   return useMutation({
     mutationFn: async (params: SubscribeParams) => {
