@@ -1,16 +1,13 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { getArticleById } from '../data/articles';
 import { useSearch } from '../contexts/SearchContext';
+import { MarkdownRenderer } from '../components/common/MarkdownRenderer';
 import CommentSection from '../components/comment/CommentSection.tsx';
-import {ViewSpan} from "../components/article/ViewSpan.tsx";
+import { ViewSpan } from '../components/article/ViewSpan.tsx';
 import LinkIcon from '../assets/icons/link.svg?react';
-import {NotFound} from "./NotFound.tsx";
+import { NotFound } from './NotFound.tsx';
 
 const Article = () => {
   const { id } = useParams<{ id: string }>();
@@ -59,33 +56,7 @@ const Article = () => {
       </ArticleHeader>
 
       <Content>
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            code({ className, children, node, ...props }) {
-              const match = /language-(\w+)/.exec(className || '');
-              const isBlock = node?.position?.start.line !== node?.position?.end.line || match;
-              return isBlock && match ? (
-                <CodeBlockWrapper>
-                  <CodeLanguage>{match[1]}</CodeLanguage>
-                  <SyntaxHighlighter
-                    style={oneDark}
-                    language={match[1]}
-                    PreTag="div"
-                  >
-                    {String(children).replace(/\n$/, '')}
-                  </SyntaxHighlighter>
-                </CodeBlockWrapper>
-              ) : (
-                <code className={className} {...props}>
-                  {children}
-                </code>
-              );
-            },
-          }}
-        >
-          {article.content}
-        </ReactMarkdown>
+        <MarkdownRenderer content={article.content} />
       </Content>
 
       <ButtonRow>
@@ -335,28 +306,6 @@ const Content = styled.div`
     border-top: 1px solid ${({ theme }) => theme.colors.border};
     margin: ${({ theme }) => theme.spacing.xl} 0;
   }
-`;
-
-const CodeBlockWrapper = styled.div`
-  position: relative;
-
-  &:hover span {
-    opacity: 1;
-  }
-`;
-
-const CodeLanguage = styled.span`
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  color: ${({ theme }) => theme.colors.textTertiary};
-  font-family: 'Fira Code', 'Consolas', monospace;
-  text-transform: uppercase;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  z-index: 1;
-  pointer-events: none;
 `;
 
 const ButtonRow = styled.div`

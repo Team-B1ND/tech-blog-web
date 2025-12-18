@@ -1,12 +1,12 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import type { Category } from '../types/article';
 import { categories } from '../types/article';
+import { MarkdownToolbar } from '../components/write/MarkdownToolbar';
+import { MarkdownRenderer } from '../components/common/MarkdownRenderer';
+import { useMarkdownEditor } from '../hooks/write/useMarkdownEditor.ts';
+import ImageIcon from '../assets/icons/image.svg?react';
 
 export const Write = () => {
   const navigate = useNavigate();
@@ -19,9 +19,18 @@ export const Write = () => {
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const {
+    textareaRef,
+    imageInputRef,
+    isUploadingImage,
+    handleToolbarAction,
+    handleImageUpload: handleContentImageUpload,
+    triggerImageUpload,
+  } = useMarkdownEditor(content, setContent);
+
   const canSubmit = title.trim() && authorIds.trim() && content.trim() && !isSubmitting;
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleThumbnailUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -133,7 +142,7 @@ export const Write = () => {
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={handleImageUpload}
+            onChange={handleThumbnailUpload}
             style={{ display: 'none' }}
           />
           {thumbnail ? (
@@ -151,11 +160,7 @@ export const Write = () => {
           ) : (
             <ImageUploadArea onClick={() => fileInputRef.current?.click()}>
               <UploadIcon>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                  <circle cx="8.5" cy="8.5" r="1.5" />
-                  <polyline points="21 15 16 10 5 21" />
-                </svg>
+                <ImageIcon />
               </UploadIcon>
               <UploadText>클릭하여 이미지 업로드</UploadText>
             </ImageUploadArea>
@@ -164,10 +169,23 @@ export const Write = () => {
 
         <EditorSection>
           <Label>내용 * (Markdown 지원)</Label>
+          <input
+            ref={imageInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleContentImageUpload}
+            style={{ display: 'none' }}
+          />
           <EditorWrapper>
             <EditorPane>
               <PaneHeader>편집</PaneHeader>
+              <MarkdownToolbar
+                onInsert={handleToolbarAction}
+                onImageUpload={triggerImageUpload}
+                isUploading={isUploadingImage}
+              />
               <Textarea
+                ref={textareaRef}
                 id="content"
                 placeholder="마크다운으로 글을 작성하세요..."
                 value={content}
@@ -178,33 +196,7 @@ export const Write = () => {
               <PaneHeader>미리보기</PaneHeader>
               <PreviewContent>
                 {content ? (
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-                      code({ className, children, node, ...props }) {
-                        const match = /language-(\w+)/.exec(className || '');
-                        const isBlock = node?.position?.start.line !== node?.position?.end.line || match;
-                        return isBlock && match ? (
-                          <CodeBlockWrapper>
-                            <CodeLanguage>{match[1]}</CodeLanguage>
-                            <SyntaxHighlighter
-                              style={oneDark}
-                              language={match[1]}
-                              PreTag="div"
-                            >
-                              {String(children).replace(/\n$/, '')}
-                            </SyntaxHighlighter>
-                          </CodeBlockWrapper>
-                        ) : (
-                          <code className={className} {...props}>
-                            {children}
-                          </code>
-                        );
-                      },
-                    }}
-                  >
-                    {content}
-                  </ReactMarkdown>
+                  <MarkdownRenderer content={content} />
                 ) : (
                   <PlaceholderText>마크다운을 작성하면 미리보기가 표시됩니다</PlaceholderText>
                 )}
@@ -594,26 +586,4 @@ const PreviewContent = styled.div`
 const PlaceholderText = styled.div`
   color: ${({ theme }) => theme.colors.textTertiary};
   font-style: italic;
-`;
-
-const CodeBlockWrapper = styled.div`
-  position: relative;
-
-  &:hover span {
-    opacity: 1;
-  }
-`;
-
-const CodeLanguage = styled.span`
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.5);
-  font-family: 'Fira Code', 'Consolas', monospace;
-  text-transform: uppercase;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  z-index: 1;
-  pointer-events: none;
 `;
