@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { useTheme } from '@/contexts/ThemeContext';
-import { useSearch } from '@/contexts/SearchContext';
-import SearchModal from '@/components/search/SearchModal';
+import { useTheme } from '@/contexts/ThemeContext.tsx';
+import { useSearch } from '@/contexts/SearchContext.tsx';
+import SearchModal from '@/components/search/SearchModal.tsx';
 import SearchIcon from '@/assets/icons/search.svg?react';
 import MoonIcon from '@/assets/icons/moon.svg?react';
 import SunIcon from '@/assets/icons/sun.svg?react';

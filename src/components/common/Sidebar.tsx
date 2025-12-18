@@ -4,7 +4,7 @@ import { usePopularArticles, useTags } from '@/hooks/api';
 import { mapApiArticles } from '@/lib/api/mappers';
 import { useSearch } from '@/contexts/SearchContext';
 import { ViewSpan } from '@/components/article/ViewSpan';
-import { Skeleton } from '@/components/common/Skeleton';
+import { Skeleton } from '@/skeleton/Skeleton.tsx';
 
 const PopularSkeleton = () => (
   <PopularList>

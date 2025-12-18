@@ -1,11 +1,11 @@
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuthor, useAuthorArticles } from '@/hooks/api';
-import { mapApiArticles } from '@/lib/api/mappers';
-import { useAuth } from '@/hooks/useAuth';
-import { ArticleCard } from '@/components/article/ArticleCard';
-import { Pagination } from '@/components/common/Pagination';
-import { NotFound } from '@/pages/NotFound';
+import { mapApiArticles } from '@/lib/api/mappers.ts';
+import { useAuth } from '@/hooks/useAuth.ts';
+import { ArticleCard } from '@/components/article/ArticleCard.tsx';
+import { Pagination } from '@/components/common/Pagination.tsx';
+import { NotFound } from '@/pages/common/NotFound.tsx';
 
 const ARTICLES_PER_PAGE = 9;
 

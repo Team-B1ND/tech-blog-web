@@ -5,19 +5,19 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import { SearchProvider } from '@/contexts/SearchContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { GlobalStyle } from '@/styles/GlobalStyle';
-import Layout from '@/components/common/Layout';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
-import ScrollToTop from '@/components/common/ScrollToTop';
-import Article from '@/pages/Article';
-import { Home } from '@/pages/Home';
-import { Subscribe } from '@/pages/Subscribe';
-import { Login } from '@/pages/Login';
-import { Dashboard } from '@/pages/Dashboard';
-import { Write } from '@/pages/Write';
-import { ProfileEdit } from '@/pages/ProfileEdit';
-import { NotFound } from '@/pages/NotFound';
-import { Author } from '@/pages/Author';
-import { AuthCallback } from '@/pages/AuthCallback';
+import Article from '@/pages/article/Article.tsx';
+import { Home } from '@/pages/common/Home.tsx';
+import { Subscribe } from '@/pages/subscribe/Subscribe.tsx';
+import { Login } from '@/pages/auth/Login.tsx';
+import { Dashboard } from '@/pages/dashboard/Dashboard.tsx';
+import { Write } from '@/pages/dashboard/Write.tsx';
+import { ProfileEdit } from '@/pages/dashboard/ProfileEdit.tsx';
+import { NotFound } from '@/pages/common/NotFound.tsx';
+import { Author } from '@/pages/author/Author.tsx';
+import { AuthCallback } from '@/pages/auth/AuthCallback.tsx';
+import {ScrollToTop} from "@/components/common/ScrollToTop.tsx";
+import {Layout} from "@/components/common/Layout.tsx";
 
 function App() {
   return (

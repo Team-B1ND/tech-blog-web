@@ -2,15 +2,15 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useArticle } from '@/hooks/api';
-import { mapApiArticle } from '@/lib/api/mappers';
-import { categoryDisplayName } from '@/types/article';
-import { useSearch } from '@/contexts/SearchContext';
-import { MarkdownRenderer } from '@/components/common/MarkdownRenderer';
-import { Skeleton } from '@/components/common/Skeleton';
-import CommentSection from '@/components/comment/CommentSection';
-import { ViewSpan } from '@/components/article/ViewSpan';
+import { mapApiArticle } from '@/lib/api/mappers.ts';
+import { categoryDisplayName } from '@/types/article.ts';
+import { useSearch } from '@/contexts/SearchContext.tsx';
+import { MarkdownRenderer } from '@/components/markdown/MarkdownRenderer.tsx';
+import { Skeleton } from '@/skeleton/Skeleton.tsx';
+import CommentSection from '@/components/comment/CommentSection.tsx';
+import { ViewSpan } from '@/components/article/ViewSpan.tsx';
 import LinkIcon from '@/assets/icons/link.svg?react';
-import { NotFound } from '@/pages/NotFound';
+import { NotFound } from '@/pages/common/NotFound.tsx';
 
 const ArticleSkeleton = () => (
   <>

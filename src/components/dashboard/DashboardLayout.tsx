@@ -203,7 +203,7 @@ const SidebarLink = styled(NavLink)`
     color: ${({ theme }) => theme.colors.text};
   }
 
-  &.active {
+  &:active {
     color: ${({ theme }) => theme.colors.primary};
     font-weight: 600;
   }

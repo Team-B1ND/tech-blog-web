@@ -1,15 +1,15 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
-import type { Category, CategorySlug } from '@/types/article';
-import { slugToCategory, categoryToSlug } from '@/types/article';
+import type { Category, CategorySlug } from '@/types/article.ts';
+import { slugToCategory, categoryToSlug } from '@/types/article.ts';
 import { useArticles } from '@/hooks/api';
-import { mapApiArticles } from '@/lib/api/mappers';
-import { ArticleCard } from '@/components/article/ArticleCard';
+import { mapApiArticles } from '@/lib/api/mappers.ts';
+import { ArticleCard } from '@/components/article/ArticleCard.tsx';
 import { ArticleCardSkeleton } from '@/skeleton/article/ArticleCardSkeleton.tsx';
-import { CategoryFilter } from '@/components/filter/CategoryFilter';
-import { Sidebar } from '@/components/common/Sidebar';
-import { Pagination } from '@/components/common/Pagination';
-import { NotFound } from '@/pages/NotFound';
+import { CategoryFilter } from '@/components/filter/CategoryFilter.tsx';
+import { Sidebar } from '@/components/common/Sidebar.tsx';
+import { Pagination } from '@/components/common/Pagination.tsx';
+import { NotFound } from '@/pages/common/NotFound.tsx';
 
 const ARTICLES_PER_PAGE = 20;
 const validSlugs = new Set(['dev', 'infra', 'design', 'product']);

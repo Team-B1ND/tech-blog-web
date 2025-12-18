@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import type { Category } from '@/types/article';
-import { categories } from '@/types/article';
-import { MarkdownToolbar } from '@/components/write/MarkdownToolbar';
-import { MarkdownRenderer } from '@/components/common/MarkdownRenderer';
-import { useMarkdownEditor } from '@/hooks/write/useMarkdownEditor';
-import { useAuth } from '@/hooks/useAuth';
+import type { Category } from '@/types/article.ts';
+import { categories } from '@/types/article.ts';
+import { MarkdownToolbar } from '@/components/write/MarkdownToolbar.tsx';
+import { MarkdownRenderer } from '@/components/markdown/MarkdownRenderer.tsx';
+import { useMarkdownEditor } from '@/hooks/write/useMarkdownEditor.ts';
+import { useAuth } from '@/hooks/useAuth.ts';
 import ImageIcon from '@/assets/icons/image.svg?react';
 
 export const Write = () => {
