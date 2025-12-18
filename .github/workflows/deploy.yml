@@ -40,6 +40,13 @@ jobs:
             sudo mkdir -p /var/lib/docker/volumes/tech/_data/main
             sudo chown -R $USER:$USER /var/lib/docker/volumes/tech/_data
 
+      - name: Setup SSH for rsync
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+
       # 파일 전송
       - name: Deploy to Docker volume
         run: |
