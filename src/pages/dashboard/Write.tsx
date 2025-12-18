@@ -1,23 +1,44 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import type { Category } from '@/types/article.ts';
-import { categories } from '@/types/article.ts';
+import type { ApiCategory } from '@/lib/api/types.ts';
 import { MarkdownToolbar } from '@/components/write/MarkdownToolbar.tsx';
 import { MarkdownRenderer } from '@/components/markdown/MarkdownRenderer.tsx';
+import { AuthorSelector, type Author } from '@/components/write/AuthorSelector.tsx';
 import { useMarkdownEditor } from '@/hooks/write/useMarkdownEditor.ts';
 import { useAuth } from '@/hooks/auth/useAuth.ts';
+import { useCreateArticle } from '@/api';
 import ImageIcon from '@/assets/icons/image.svg?react';
+
+const API_CATEGORIES: { label: string; value: ApiCategory }[] = [
+  { label: '개발', value: 'DEVELOPMENT' },
+  { label: '인프라', value: 'INFRA' },
+  { label: '디자인', value: 'DESIGN' },
+  { label: '프로덕트', value: 'PRODUCT' },
+];
 
 export const Write = () => {
   const { user } = useAuth();
+
+  if (!user) {
+    return null;
+  }
+
+  return <WriteForm currentUser={{ id: user.id, name: user.name }} />;
+};
+
+const WriteForm = ({ currentUser }: { currentUser: Author }) => {
+  const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState('');
-  const [authorIds, setAuthorIds] = useState('');
-  const [category, setCategory] = useState<Category>('개발');
+  const [authors, setAuthors] = useState<Author[]>([currentUser]);
+  const [category, setCategory] = useState<ApiCategory>('DEVELOPMENT');
   const [tags, setTags] = useState('');
-  const [thumbnail, setThumbnail] = useState('');
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState('');
   const [content, setContent] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const createArticle = useCreateArticle();
 
   const {
     textareaRef,
@@ -28,51 +49,43 @@ export const Write = () => {
     triggerImageUpload,
   } = useMarkdownEditor(content, setContent);
 
-  // 로그인된 사용자 ID로 authorIds 초기화
-  useEffect(() => {
-    if (user && !authorIds) {
-      setAuthorIds(user.id);
-    }
-  }, [user, authorIds]);
-
-  const canSubmit = title.trim() && authorIds.trim() && content.trim() && !isSubmitting;
+  const canSubmit = title.trim() && authors.length > 0 && content.trim() && thumbnailFile && !createArticle.isPending;
 
   const handleThumbnailUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setThumbnailFile(file);
     const reader = new FileReader();
     reader.onloadend = () => {
-      setThumbnail(reader.result as string);
+      setThumbnailPreview(reader.result as string);
     };
     reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canSubmit) return;
-
-    setIsSubmitting(true);
+    if (!canSubmit || !thumbnailFile) return;
 
     const articleData = {
       title: title.trim(),
-      authorIds: authorIds.split(',').map(a => a.trim()).filter(Boolean),
+      authorIds: authors.map(a => a.id),
       content: content,
       category,
-      thumbnail: thumbnail || undefined,
       tags: tags.split(',').map(t => t.trim()).filter(Boolean),
     };
 
-    console.log('Article Data:', JSON.stringify(articleData, null, 2));
-
     try {
-      await navigator.clipboard.writeText(JSON.stringify(articleData, null, 2));
-      alert('글 데이터가 클립보드에 복사되었습니다!');
+      const result = await createArticle.mutateAsync({
+        article: articleData,
+        thumbnail: thumbnailFile,
+      });
+      alert('글이 작성되었습니다!');
+      navigate(`/article/${result.id}`);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error('Failed to create article:', err);
+      alert('글 작성에 실패했습니다.');
     }
-
-    setIsSubmitting(false);
   };
 
   return (
@@ -85,7 +98,7 @@ export const Write = () => {
             onClick={handleSubmit}
             disabled={!canSubmit}
           >
-            {isSubmitting ? '저장 중...' : '저장'}
+            {createArticle.isPending ? '저장 중...' : '저장'}
           </SubmitButton>
         </ButtonGroup>
       </Header>
@@ -108,10 +121,10 @@ export const Write = () => {
             <Select
               id="category"
               value={category}
-              onChange={(e) => setCategory(e.target.value as Category)}
+              onChange={(e) => setCategory(e.target.value as ApiCategory)}
             >
-              {categories.filter(c => c !== '전체').map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
+              {API_CATEGORIES.map((cat) => (
+                <option key={cat.value} value={cat.value}>{cat.label}</option>
               ))}
             </Select>
           </FormGroup>
@@ -119,13 +132,11 @@ export const Write = () => {
 
         <FormRow>
           <FormGroup $flex={1}>
-            <Label htmlFor="authorIds">작성자 ID * (쉼표로 구분)</Label>
-            <Input
-              id="authorIds"
-              type="text"
-              placeholder="kim-dev, lee-front"
-              value={authorIds}
-              onChange={(e) => setAuthorIds(e.target.value)}
+            <Label>작성자</Label>
+            <AuthorSelector
+              authors={authors}
+              onChange={setAuthors}
+              currentUser={currentUser}
             />
           </FormGroup>
           <FormGroup $flex={1}>
@@ -133,7 +144,7 @@ export const Write = () => {
             <Input
               id="tags"
               type="text"
-              placeholder="React, TypeScript, Frontend"
+              placeholder="springboot, react, devops"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
             />
@@ -149,14 +160,14 @@ export const Write = () => {
             onChange={handleThumbnailUpload}
             style={{ display: 'none' }}
           />
-          {thumbnail ? (
+          {thumbnailPreview ? (
             <ThumbnailPreview>
-              <ThumbnailImage src={thumbnail} alt="썸네일 미리보기" />
+              <ThumbnailImage src={thumbnailPreview} alt="썸네일 미리보기" />
               <ThumbnailOverlay>
                 <ThumbnailButton type="button" onClick={() => fileInputRef.current?.click()}>
                   변경
                 </ThumbnailButton>
-                <ThumbnailButton type="button" onClick={() => setThumbnail('')}>
+                <ThumbnailButton type="button" onClick={() => { setThumbnailFile(null); setThumbnailPreview(''); }}>
                   삭제
                 </ThumbnailButton>
               </ThumbnailOverlay>
@@ -172,7 +183,7 @@ export const Write = () => {
         </FormGroup>
 
         <EditorSection>
-          <Label>내용 * (Markdown 지원)</Label>
+          <Label>본문</Label>
           <input
             ref={imageInputRef}
             type="file"

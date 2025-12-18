@@ -27,7 +27,7 @@ export const useSearchModal = ({ isOpen, onClose }: UseSearchModalParams) => {
     q: debouncedQuery.length >= 2 ? debouncedQuery : '',
   });
 
-  const results = data ? mapApiArticles(data.data) : [];
+  const results = data ? mapApiArticles(data.articles) : [];
 
   useEffect(() => {
     if (isOpen) {

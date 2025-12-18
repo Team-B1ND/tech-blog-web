@@ -3,6 +3,7 @@ import { Outlet, useNavigate, Link, NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '@/hooks/auth/useAuth.ts';
 import { useTheme } from '@/contexts/ThemeContext';
+import { Activation } from './Activation';
 import LogoIcon from '@/assets/logo.svg?react';
 import MoonIcon from '@/assets/icons/moon.svg?react';
 import SunIcon from '@/assets/icons/sun.svg?react';
@@ -20,6 +21,29 @@ export const DashboardLayout = () => {
 
   if (isLoading || !isLoggedIn) {
     return null;
+  }
+
+  const isPending = user?.role === 'PENDING';
+
+  if (isPending) {
+    return (
+      <Container>
+        <Header>
+          <HeaderInner>
+            <Logo to="/">
+              <StyledLogo />
+            </Logo>
+            <Nav>
+              <IconButton onClick={toggleTheme} aria-label="테마 변경">
+                {mode === 'light' ? <MoonIcon /> : <SunIcon />}
+              </IconButton>
+              <LogoutButton onClick={() => { logout(); navigate('/'); }}>로그아웃</LogoutButton>
+            </Nav>
+          </HeaderInner>
+        </Header>
+        <Activation />
+      </Container>
+    );
   }
 
   const handleLogout = () => {
@@ -203,7 +227,7 @@ const SidebarLink = styled(NavLink)`
     color: ${({ theme }) => theme.colors.text};
   }
 
-  &:active {
+  &.active {
     color: ${({ theme }) => theme.colors.primary};
     font-weight: 600;
   }

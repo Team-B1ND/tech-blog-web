@@ -1,6 +1,6 @@
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAuthor, useAuthorArticles } from '@/api';
+import { useMember, useMemberArticles } from '@/api';
 import { mapApiArticles } from '@/lib/api/mappers.ts';
 import { useAuth } from '@/hooks/auth/useAuth.ts';
 import { ArticleCard } from '@/components/article/ArticleCard.tsx';
@@ -16,26 +16,26 @@ export const Author = () => {
 
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
 
-  const { data: author, isLoading: authorLoading, error: authorError } = useAuthor(id || '');
-  const { data: articlesData, isLoading: articlesLoading } = useAuthorArticles(id || '', {
+  const { data: member, isLoading: memberLoading, error: memberError } = useMember(id || '');
+  const { data: articlesData, isLoading: articlesLoading } = useMemberArticles(id || '', {
     page: currentPage,
     limit: ARTICLES_PER_PAGE,
   });
 
-  if (authorLoading) {
+  if (memberLoading) {
     return (
       <Container>
-        <LoadingState>작성자 정보를 불러오는 중...</LoadingState>
+        <LoadingState>회원 정보를 불러오는 중...</LoadingState>
       </Container>
     );
   }
 
-  if (authorError || !author) {
+  if (memberError || !member) {
     return <NotFound />;
   }
 
-  const isOwnProfile = isLoggedIn && user?.id === author.id;
-  const articles = articlesData ? mapApiArticles(articlesData.data) : [];
+  const isOwnProfile = isLoggedIn && user?.id === member.id;
+  const articles = articlesData ? mapApiArticles(articlesData.articles) : [];
   const totalCount = articlesData?.pagination.totalCount || 0;
   const totalPages = articlesData?.pagination.totalPages || 1;
 
@@ -43,10 +43,10 @@ export const Author = () => {
     <Container>
       <AuthorHeader>
         <NameRow>
-          {author.grade && <Generation>{author.grade}기</Generation>}
-          <Name>{author.name}</Name>
+          {member.generation && <Generation>{member.generation}기</Generation>}
+          <Name>{member.name}</Name>
         </NameRow>
-        {author.email && <Bio>{author.email}</Bio>}
+        {member.bio && <Bio>{member.bio}</Bio>}
         {isOwnProfile && (
           <ButtonRow>
             <EditProfileButton to="/dashboard/profile">
@@ -130,6 +130,7 @@ const Bio = styled.p`
   font-size: ${({ theme }) => theme.fontSizes.lg};
   color: ${({ theme }) => theme.colors.textSecondary};
   line-height: 1.6;
+  margin-top: ${({ theme }) => theme.spacing.md};
 `;
 
 const ButtonRow = styled.div`

@@ -1,6 +1,20 @@
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client.ts';
-import type {ApiResponse, ApiArticle, PaginatedResponse, ArticleListParams, ArticleSearchParams,} from '@/lib/api/types.ts';
+import type {ApiResponse, ApiArticle, ApiPopularArticle, PaginatedResponse, ArticleListParams, ArticleSearchParams, ApiCategory,} from '@/lib/api/types.ts';
+
+// 글 작성 요청 타입
+export interface CreateArticleRequest {
+  title: string;
+  authorIds: string[];
+  category: ApiCategory;
+  tags?: string[];
+  content: string;
+}
+
+// 파일 업로드 응답 타입
+interface FileUploadResponse {
+  url: string;
+}
 
 // 글 목록 조회
 export const useArticles = (params?: ArticleListParams) => {
@@ -29,8 +43,8 @@ export const useInfiniteArticles = (params?: Omit<ArticleListParams, 'page'>) =>
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
-      const { page, totalPages } = lastPage.pagination;
-      return page < totalPages ? page + 1 : undefined;
+      const { currentPage, totalPages } = lastPage.pagination;
+      return currentPage < totalPages ? currentPage + 1 : undefined;
     },
   });
 };
@@ -52,7 +66,7 @@ export const usePopularArticles = (limit?: number) => {
   return useQuery({
     queryKey: ['articles', 'popular', limit],
     queryFn: async () => {
-      const { data } = await apiClient.get<ApiResponse<ApiArticle[]>>(
+      const { data } = await apiClient.get<ApiResponse<ApiPopularArticle[]>>(
         '/articles/popular',
         { params: { limit } }
       );
@@ -73,5 +87,42 @@ export const useSearchArticles = (params: ArticleSearchParams) => {
       return data.data;
     },
     enabled: !!params.q,
+  });
+};
+
+// 글 작성
+export const useCreateArticle = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ article, thumbnail }: { article: CreateArticleRequest; thumbnail: File }) => {
+      const formData = new FormData();
+      formData.append('article', new Blob([JSON.stringify(article)], { type: 'application/json' }));
+      formData.append('thumbnail', thumbnail);
+
+      const { data } = await apiClient.post<ApiResponse<ApiArticle>>('/articles', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['articles'] });
+      queryClient.invalidateQueries({ queryKey: ['member'] });
+    },
+  });
+};
+
+// 이미지 업로드
+export const useUploadImage = () => {
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const { data } = await apiClient.post<ApiResponse<FileUploadResponse>>('/upload/image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return data.data;
+    },
   });
 };

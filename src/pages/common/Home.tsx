@@ -35,7 +35,7 @@ export const Home = () => {
     return <NotFound />;
   }
 
-  const articles = data ? mapApiArticles(data.data) : [];
+  const articles = data ? mapApiArticles(data.articles) : [];
   const totalPages = data?.pagination.totalPages || 1;
   const totalCount = data?.pagination.totalCount || 0;
 

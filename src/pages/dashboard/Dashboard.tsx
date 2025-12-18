@@ -1,30 +1,47 @@
 import styled from 'styled-components';
-import { useAuth } from '@/hooks/auth/useAuth.ts';
-import { getArticlesByAuthor } from '@/data/authors.ts';
+import { useCurrentMember, useMemberArticles } from '@/api';
+import { mapApiArticles } from '@/lib/api/mappers.ts';
 import { ArticleCard } from '@/components/article/ArticleCard.tsx';
+import { DashboardSkeleton } from '@/skeleton/dashboard/DashboardSkeleton.tsx';
+import { ArticleCardSkeleton } from '@/skeleton/article/ArticleCardSkeleton.tsx';
 
 export const Dashboard = () => {
-  const { user } = useAuth();
+  const { data: member, isLoading: isMemberLoading } = useCurrentMember();
 
-  if (!user) return null;
+  const { data: articlesData, isLoading: isArticlesLoading } = useMemberArticles(member?.id || '', {
+    page: 1,
+    limit: 6,
+  });
 
-  const myArticles = getArticlesByAuthor(user.name);
+  if (isMemberLoading || !member) {
+    return <DashboardSkeleton />;
+  }
+
+  const articles = articlesData ? mapApiArticles(articlesData.articles) : [];
+  const totalCount = articlesData?.pagination.totalCount || 0;
+  const totalViews = articles.reduce((sum, a) => sum + a.views, 0);
 
   return (
     <Container>
       <WelcomeSection>
-        <WelcomeTitle>안녕하세요, {user.name}님!</WelcomeTitle>
-        <WelcomeSubtitle>{user.bio}</WelcomeSubtitle>
+        <WelcomeTitle>안녕하세요, {member.name}님!</WelcomeTitle>
+        {member.bio && <WelcomeSubtitle>{member.bio}</WelcomeSubtitle>}
         <WelcomeStats>
-          {user.generation}기 · 글 {myArticles.length}개 · 조회 {myArticles.reduce((sum, a) => sum + a.views, 0).toLocaleString()}
+          {member.generation}기 · 글 {totalCount}개 · 조회 {totalViews.toLocaleString()}
         </WelcomeStats>
       </WelcomeSection>
 
       <RecentArticles>
         <SectionTitle>최근 작성한 글</SectionTitle>
-        {myArticles.length > 0 ? (
+        {isArticlesLoading ? (
           <ArticleGrid>
-            {myArticles.slice(0, 6).map((article) => (
+            {[...Array(6)].map((_, i) => (
+              <ArticleCardSkeleton key={i} variant="block" />
+            ))}
+          </ArticleGrid>
+        ) : articles.length > 0 ? (
+          <ArticleGrid>
+            {articles.map((article) => (
               <ArticleCard key={article.id} article={article} variant="block" />
             ))}
           </ArticleGrid>

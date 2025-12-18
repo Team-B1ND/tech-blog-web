@@ -67,7 +67,7 @@ export const Subscribe = () => {
   return (
     <Container>
       <Card>
-        <Title>뉴스레터 구독</Title>
+        <Title>아티클 구독</Title>
         <Description>
           B1ND 기술 블로그의 새로운 글을 이메일로 받아보세요.
         </Description>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import type { CommentInput } from '@/types/comment';
 
@@ -13,6 +13,20 @@ interface CommentFormProps {
 const CommentForm = ({ onSubmit, isReply = false, replyAuthor, onCancel, isSubmitting = false }: CommentFormProps) => {
   const [author, setAuthor] = useState('');
   const [content, setContent] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const adjustTextareaHeight = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, []);
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
+    adjustTextareaHeight();
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +35,9 @@ const CommentForm = ({ onSubmit, isReply = false, replyAuthor, onCancel, isSubmi
     onSubmit({ author: author.trim(), content: content.trim() });
     setAuthor('');
     setContent('');
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
   };
 
   return (
@@ -40,10 +57,10 @@ const CommentForm = ({ onSubmit, isReply = false, replyAuthor, onCancel, isSubmi
         />
       </InputRow>
       <ContentTextarea
+        ref={textareaRef}
         placeholder={isReply ? '답글을 입력하세요' : '댓글을 입력하세요'}
         value={content}
-        onChange={(e) => setContent(e.target.value)}
-        rows={3}
+        onChange={handleContentChange}
       />
       <ButtonRow>
         {isReply && onCancel && (
@@ -118,8 +135,9 @@ const ContentTextarea = styled.textarea`
   font-family: inherit;
   background-color: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
-  resize: vertical;
+  resize: none;
   min-height: 80px;
+  overflow: hidden;
 
   &:focus {
     outline: none;

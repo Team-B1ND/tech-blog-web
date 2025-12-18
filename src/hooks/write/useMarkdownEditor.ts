@@ -1,5 +1,6 @@
-import { useCallback, useRef, useState, useEffect } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import type { ToolbarAction } from '@/components/write/MarkdownToolbar';
+import { useUploadImage } from '@/api';
 
 export const useMarkdownEditor = (
   content: string,
@@ -7,7 +8,7 @@ export const useMarkdownEditor = (
 ) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const uploadImage = useUploadImage();
 
   const insertText = useCallback((before: string, after: string = '', placeholder: string = '') => {
     const textarea = textareaRef.current;
@@ -97,23 +98,15 @@ export const useMarkdownEditor = (
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setIsUploadingImage(true);
-
-    // TODO: Replace with actual API call to POST /upload/image
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const imageUrl = reader.result as string;
-      insertAtCursor(`![이미지](${imageUrl})\n`);
-      setIsUploadingImage(false);
-    };
-    reader.onerror = () => {
+    try {
+      const result = await uploadImage.mutateAsync(file);
+      insertAtCursor(`![이미지](${result.url})\n`);
+    } catch {
       alert('이미지 업로드에 실패했습니다.');
-      setIsUploadingImage(false);
-    };
-    reader.readAsDataURL(file);
+    }
 
     e.target.value = '';
-  }, [insertAtCursor]);
+  }, [insertAtCursor, uploadImage]);
 
   const triggerImageUpload = useCallback(() => {
     imageInputRef.current?.click();
@@ -146,7 +139,7 @@ export const useMarkdownEditor = (
   return {
     textareaRef,
     imageInputRef,
-    isUploadingImage,
+    isUploadingImage: uploadImage.isPending,
     handleToolbarAction,
     handleImageUpload,
     triggerImageUpload,

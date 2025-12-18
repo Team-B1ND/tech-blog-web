@@ -1,39 +1,46 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAuth } from '@/hooks/auth/useAuth.ts';
+import { useCurrentMember, useUpdateProfile } from '@/api';
+import type { ApiMember } from '@/lib/api/types';
 
 export const ProfileEdit = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const [bio, setBio] = useState('');
-  const [originalBio, setOriginalBio] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
+  const { data: member, isLoading } = useCurrentMember();
 
-  useEffect(() => {
-    if (user) {
-      setBio(user.bio);
-      setOriginalBio(user.bio);
-    }
-  }, [user]);
-
-  if (!user) {
+  if (isLoading) {
     return null;
   }
 
-  const hasChanges = bio !== originalBio;
+  if (!member) {
+    return null;
+  }
+
+  return <ProfileEditForm member={member} />;
+};
+
+const ProfileEditForm = ({ member }: { member: ApiMember }) => {
+  const navigate = useNavigate();
+  const updateProfile = useUpdateProfile();
+  const [bio, setBio] = useState(member.bio || '');
+  const [generation, setGeneration] = useState(member.generation?.toString() || '');
+
+  const hasChanges =
+    bio !== (member.bio || '') ||
+    generation !== (member.generation?.toString() || '');
 
   const handleSave = async () => {
     if (!hasChanges) return;
-    setIsSaving(true);
 
-    // 목업: 실제로는 API 호출
-    console.log('Profile update:', { bio });
-
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    alert('프로필이 저장되었습니다. (목업)');
-    setIsSaving(false);
+    try {
+      await updateProfile.mutateAsync({
+        bio,
+        generation: generation ? Number(generation) : undefined,
+      });
+      alert('프로필이 저장되었습니다.');
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+      alert('프로필 저장에 실패했습니다.');
+    }
   };
 
   return (
@@ -44,16 +51,30 @@ export const ProfileEdit = () => {
           <CancelButton type="button" onClick={() => navigate(-1)}>
             취소
           </CancelButton>
-          <SaveButton onClick={handleSave} disabled={!hasChanges || isSaving}>
-            {isSaving ? '저장 중...' : '저장'}
+          <SaveButton onClick={handleSave} disabled={!hasChanges || updateProfile.isPending}>
+            {updateProfile.isPending ? '저장 중...' : '저장'}
           </SaveButton>
         </ButtonGroup>
       </Header>
 
       <ProfileSection>
         <NameRow>
-          <Generation>{user.generation}기</Generation>
-          <Name>{user.name}</Name>
+          <GenerationChip>
+            <GenerationInput
+              type="number"
+              value={generation}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === '' || Number(value) >= 1) {
+                  setGeneration(value);
+                }
+              }}
+              placeholder="1"
+              min="1"
+            />
+            <GenerationSuffix>기</GenerationSuffix>
+          </GenerationChip>
+          <Name>{member.name}</Name>
         </NameRow>
         <BioInput
           type="text"
@@ -138,14 +159,39 @@ const Name = styled.h2`
   color: ${({ theme }) => theme.colors.text};
 `;
 
-const Generation = styled.span`
-  display: inline-block;
+const GenerationChip = styled.div`
+  display: inline-flex;
+  align-items: center;
   padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing.md}`};
   background-color: ${({ theme }) => theme.colors.primary};
+  border-radius: ${({ theme }) => theme.borderRadius.full};
+`;
+
+const GenerationInput = styled.input`
+  width: 32px;
+  background: transparent;
   color: white;
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: 600;
-  border-radius: ${({ theme }) => theme.borderRadius.full};
+  border: none;
+  outline: none;
+  text-align: center;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+`;
+
+const GenerationSuffix = styled.span`
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: 600;
+  color: white;
 `;
 
 const BioInput = styled.input`
