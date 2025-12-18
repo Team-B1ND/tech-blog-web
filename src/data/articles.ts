@@ -4,7 +4,10 @@ export const articles: Article[] = [
   {
     id: '1',
     title: 'React 19에서 달라진 것들: use() 훅과 서버 컴포넌트',
-    authors: ['김개발', '이프론트'],
+    authors: [
+      { id: 'kim-dev', name: '김개발' },
+      { id: 'lee-front', name: '이프론트' }
+    ],
     createdAt: '2024.12.15',
     category: '개발',
     thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=300&fit=crop',
@@ -91,7 +94,7 @@ function LikeButton() {
   {
     id: '2',
     title: 'Kubernetes 클러스터 최적화: 비용을 50% 절감한 방법',
-    authors: ['이인프라'],
+    authors: [{ id: 'lee-infra', name: '이인프라' }],
     createdAt: '2024.12.12',
     category: '인프라',
     thumbnail: 'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=400&h=300&fit=crop',
@@ -171,7 +174,10 @@ gcloud container node-pools create spot-pool \\
   {
     id: '3',
     title: '디자인 시스템 구축기: 일관된 사용자 경험을 위한 여정',
-    authors: ['박디자인', '최유아이'],
+    authors: [
+      { id: 'park-design', name: '박디자인' },
+      { id: 'choi-ui', name: '최유아이' }
+    ],
     createdAt: '2024.12.10',
     category: '디자인',
     thumbnail: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=300&fit=crop',
@@ -239,7 +245,7 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '4',
     title: 'TypeScript 5.0: 새로운 기능과 마이그레이션 가이드',
-    authors: ['최타입'],
+    authors: [{ id: 'choi-type', name: '최타입' }],
     createdAt: '2024.12.08',
     category: '개발',
     thumbnail: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=400&h=300&fit=crop',
@@ -250,7 +256,10 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '5',
     title: '사용자 리서치로 제품 방향성 찾기',
-    authors: ['정프로덕', '한리서치'],
+    authors: [
+      { id: 'jung-product', name: '정프로덕' },
+      { id: 'han-research', name: '한리서치' }
+    ],
     createdAt: '2024.12.05',
     category: '프로덕트',
     thumbnail: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop',
@@ -261,7 +270,10 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '6',
     title: 'GitHub Actions로 CI/CD 파이프라인 구축하기',
-    authors: ['이인프라', '김데브옵스'],
+    authors: [
+      { id: 'lee-infra', name: '이인프라' },
+      { id: 'kim-devops', name: '김데브옵스' }
+    ],
     createdAt: '2024.12.01',
     category: '인프라',
     thumbnail: 'https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=400&h=300&fit=crop',
@@ -272,7 +284,7 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '7',
     title: 'Next.js 14 App Router 완벽 가이드',
-    authors: ['김개발'],
+    authors: [{ id: 'kim-dev', name: '김개발' }],
     createdAt: '2024.11.28',
     category: '개발',
     thumbnail: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=300&fit=crop',
@@ -283,7 +295,7 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '8',
     title: 'Figma 플러그인 개발기: 디자인 워크플로우 자동화',
-    authors: ['박디자인'],
+    authors: [{ id: 'park-design', name: '박디자인' }],
     createdAt: '2024.11.25',
     category: '디자인',
     thumbnail: 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=400&h=300&fit=crop',
@@ -294,7 +306,7 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '9',
     title: 'PostgreSQL 성능 튜닝: 쿼리 최적화 실전 가이드',
-    authors: ['최백엔드'],
+    authors: [{ id: 'choi-backend', name: '최백엔드' }],
     createdAt: '2024.11.22',
     category: '개발',
     thumbnail: 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=400&h=300&fit=crop',
@@ -305,7 +317,7 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '10',
     title: 'AWS Lambda와 API Gateway로 서버리스 API 구축하기',
-    authors: ['이인프라'],
+    authors: [{ id: 'lee-infra', name: '이인프라' }],
     createdAt: '2024.11.20',
     category: '인프라',
     thumbnail: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop',
@@ -316,7 +328,10 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '11',
     title: '모바일 앱 접근성 개선: 모두를 위한 디자인',
-    authors: ['최유아이', '박디자인'],
+    authors: [
+      { id: 'choi-ui', name: '최유아이' },
+      { id: 'park-design', name: '박디자인' }
+    ],
     createdAt: '2024.11.18',
     category: '디자인',
     thumbnail: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=300&fit=crop',
@@ -327,7 +342,10 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '12',
     title: 'GraphQL vs REST: 우리 팀의 선택과 이유',
-    authors: ['김개발', '최백엔드'],
+    authors: [
+      { id: 'kim-dev', name: '김개발' },
+      { id: 'choi-backend', name: '최백엔드' }
+    ],
     createdAt: '2024.11.15',
     category: '개발',
     thumbnail: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop',
@@ -338,7 +356,7 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '13',
     title: 'Docker 멀티스테이지 빌드로 이미지 크기 줄이기',
-    authors: ['김데브옵스'],
+    authors: [{ id: 'kim-devops', name: '김데브옵스' }],
     createdAt: '2024.11.12',
     category: '인프라',
     thumbnail: 'https://images.unsplash.com/photo-1605745341112-85968b19335b?w=400&h=300&fit=crop',
@@ -349,7 +367,10 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '14',
     title: 'A/B 테스트 설계와 분석: 데이터 기반 의사결정',
-    authors: ['정프로덕', '한리서치'],
+    authors: [
+      { id: 'jung-product', name: '정프로덕' },
+      { id: 'han-research', name: '한리서치' }
+    ],
     createdAt: '2024.11.10',
     category: '프로덕트',
     thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop',
@@ -360,7 +381,7 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '15',
     title: 'Zustand로 상태 관리 간소화하기',
-    authors: ['이프론트'],
+    authors: [{ id: 'lee-front', name: '이프론트' }],
     createdAt: '2024.11.08',
     category: '개발',
     thumbnail: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400&h=300&fit=crop',
@@ -371,7 +392,10 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '16',
     title: '모노레포 구축기: Turborepo 도입 경험',
-    authors: ['김개발', '김데브옵스'],
+    authors: [
+      { id: 'kim-dev', name: '김개발' },
+      { id: 'kim-devops', name: '김데브옵스' }
+    ],
     createdAt: '2024.11.05',
     category: '개발',
     thumbnail: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop',
@@ -382,7 +406,7 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '17',
     title: 'Terraform으로 인프라 코드화하기',
-    authors: ['이인프라'],
+    authors: [{ id: 'lee-infra', name: '이인프라' }],
     createdAt: '2024.11.02',
     category: '인프라',
     thumbnail: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop',
@@ -393,7 +417,7 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '18',
     title: '사용자 온보딩 개선으로 전환율 30% 상승',
-    authors: ['정프로덕'],
+    authors: [{ id: 'jung-product', name: '정프로덕' }],
     createdAt: '2024.10.30',
     category: '프로덕트',
     thumbnail: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&h=300&fit=crop',
@@ -404,7 +428,10 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '19',
     title: 'CSS-in-JS 성능 최적화: styled-components 팁',
-    authors: ['이프론트', '박디자인'],
+    authors: [
+      { id: 'lee-front', name: '이프론트' },
+      { id: 'park-design', name: '박디자인' }
+    ],
     createdAt: '2024.10.28',
     category: '개발',
     thumbnail: 'https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=400&h=300&fit=crop',
@@ -415,7 +442,7 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '20',
     title: 'Redis 캐싱 전략: 실전 적용 가이드',
-    authors: ['최백엔드'],
+    authors: [{ id: 'choi-backend', name: '최백엔드' }],
     createdAt: '2024.10.25',
     category: '개발',
     thumbnail: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop',
@@ -426,7 +453,10 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '21',
     title: 'Prometheus와 Grafana로 모니터링 시스템 구축',
-    authors: ['김데브옵스', '이인프라'],
+    authors: [
+      { id: 'kim-devops', name: '김데브옵스' },
+      { id: 'lee-infra', name: '이인프라' }
+    ],
     createdAt: '2024.10.22',
     category: '인프라',
     thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop',
@@ -437,7 +467,7 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '22',
     title: 'React Query로 서버 상태 관리하기',
-    authors: ['김개발'],
+    authors: [{ id: 'kim-dev', name: '김개발' }],
     createdAt: '2024.10.20',
     category: '개발',
     thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=300&fit=crop',
@@ -448,7 +478,7 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '23',
     title: '디자인 토큰 시스템 구축하기',
-    authors: ['박디자인'],
+    authors: [{ id: 'park-design', name: '박디자인' }],
     createdAt: '2024.10.18',
     category: '디자인',
     thumbnail: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=300&fit=crop',
@@ -459,7 +489,7 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '24',
     title: 'Jest에서 Vitest로 마이그레이션하기',
-    authors: ['이프론트'],
+    authors: [{ id: 'lee-front', name: '이프론트' }],
     createdAt: '2024.10.15',
     category: '개발',
     thumbnail: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=400&h=300&fit=crop',
@@ -470,7 +500,10 @@ Storybook을 사용해서 각 컴포넌트를 문서화했습니다. \`npm run s
   {
     id: '25',
     title: 'EKS 클러스터 운영 노하우',
-    authors: ['이인프라', '김데브옵스'],
+    authors: [
+      { id: 'lee-infra', name: '이인프라' },
+      { id: 'kim-devops', name: '김데브옵스' }
+    ],
     createdAt: '2024.10.12',
     category: '인프라',
     thumbnail: 'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=400&h=300&fit=crop',

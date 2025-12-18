@@ -12,14 +12,14 @@ export const Write = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState('');
-  const [authors, setAuthors] = useState('');
+  const [authorIds, setAuthorIds] = useState('');
   const [category, setCategory] = useState<Category>('개발');
   const [tags, setTags] = useState('');
   const [thumbnail, setThumbnail] = useState('');
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const canSubmit = title.trim() && authors.trim() && content.trim() && !isSubmitting;
+  const canSubmit = title.trim() && authorIds.trim() && content.trim() && !isSubmitting;
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -39,15 +39,12 @@ export const Write = () => {
     setIsSubmitting(true);
 
     const articleData = {
-      id: `article-${Date.now()}`,
       title: title.trim(),
-      authors: authors.split(',').map(a => a.trim()).filter(Boolean),
-      createdAt: new Date().toISOString().split('T')[0],
+      authorIds: authorIds.split(',').map(a => a.trim()).filter(Boolean),
       content: content,
       category,
-      thumbnail: thumbnail || '/default-thumbnail.jpg',
+      thumbnail: thumbnail || undefined,
       tags: tags.split(',').map(t => t.trim()).filter(Boolean),
-      views: 0,
     };
 
     console.log('Article Data:', JSON.stringify(articleData, null, 2));
@@ -109,13 +106,13 @@ export const Write = () => {
 
         <FormRow>
           <FormGroup $flex={1}>
-            <Label htmlFor="authors">작성자 * (쉼표로 구분)</Label>
+            <Label htmlFor="authorIds">작성자 ID * (쉼표로 구분)</Label>
             <Input
-              id="authors"
+              id="authorIds"
               type="text"
-              placeholder="홍길동, 김철수"
-              value={authors}
-              onChange={(e) => setAuthors(e.target.value)}
+              placeholder="kim-dev, lee-front"
+              value={authorIds}
+              onChange={(e) => setAuthorIds(e.target.value)}
             />
           </FormGroup>
           <FormGroup $flex={1}>

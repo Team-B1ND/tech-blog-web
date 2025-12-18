@@ -83,5 +83,5 @@ export const getAuthorIdByName = (name: string): string | undefined => {
 };
 
 export const getArticlesByAuthor = (authorName: string): Article[] => {
-  return articles.filter(article => article.authors.includes(authorName));
+  return articles.filter(article => article.authors.some(a => a.name === authorName));
 };

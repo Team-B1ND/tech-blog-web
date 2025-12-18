@@ -1,7 +1,12 @@
+export interface ArticleAuthor {
+  id: string;
+  name: string;
+}
+
 export interface Article {
   id: string;
   title: string;
-  authors: string[];
+  authors: ArticleAuthor[];
   createdAt: string;
   content: string;
   category: Category;

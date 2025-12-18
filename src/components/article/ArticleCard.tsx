@@ -17,7 +17,7 @@ export const ArticleCard = ({ article, variant = 'list' }: ArticleCardProps) => 
           <Title $variant={variant}>{article.title}</Title>
           <Meta>
             <Authors>
-              {article.authors.join(', ')}
+              {article.authors.map(a => a.name).join(', ')}
             </Authors>
             <Separator>·</Separator>
             <Date>{article.createdAt}</Date>
