@@ -1,7 +1,7 @@
 import { useDashboard } from '@/hooks/dashboard/useDashboard';
 import { ArticleCard } from '@/components/article/ArticleCard';
-import { DashboardSkeleton } from '@/skeleton/dashboard/DashboardSkeleton';
-import { ArticleCardSkeleton } from '@/skeleton/article/ArticleCardSkeleton';
+import { DashboardSkeleton } from '@/skeletons/dashboard/DashboardSkeleton';
+import { ArticleCardSkeleton } from '@/skeletons/article/ArticleCardSkeleton';
 import * as S from './Dashboard.style';
 
 export const Dashboard = () => {

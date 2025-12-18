@@ -1,4 +1,4 @@
-import type { ApiCategory } from '@/lib/api/types';
+import type { ApiCategory } from '@/libs/api/types';
 import { MarkdownToolbar } from '@/components/write/MarkdownToolbar';
 import { MarkdownRenderer } from '@/components/markdown/MarkdownRenderer';
 import { AuthorSelector, type Author } from '@/components/write/AuthorSelector';

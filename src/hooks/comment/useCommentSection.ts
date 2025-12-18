@@ -1,6 +1,6 @@
 import type { CommentInput } from '@/types/comment';
 import { useComments, useCreateComment } from '@/api';
-import { apiClient } from '@/lib/api/client';
+import { apiClient } from '@/libs/api/client';
 import { useQueryClient } from '@tanstack/react-query';
 
 export const useCommentSection = (articleId: string) => {

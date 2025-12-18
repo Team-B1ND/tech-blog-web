@@ -1,5 +1,5 @@
 import { useCurrentMember, useMemberArticles } from '@/api';
-import { mapApiArticles } from '@/lib/api/mappers';
+import { mapApiArticles } from '@/libs/api/mappers';
 
 export const useDashboard = () => {
   const { data: member, isLoading: isMemberLoading } = useCurrentMember();

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUpdateProfile } from '@/api';
-import type { ApiMember } from '@/lib/api/types';
+import type { ApiMember } from '@/libs/api/types';
 
 export const useProfileEditForm = (member: ApiMember) => {
   const navigate = useNavigate();

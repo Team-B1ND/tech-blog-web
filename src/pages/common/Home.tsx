@@ -1,6 +1,6 @@
 import { useHomePage } from '@/hooks/home/useHomePage';
 import { ArticleCard } from '@/components/article/ArticleCard';
-import { ArticleCardSkeleton } from '@/skeleton/article/ArticleCardSkeleton';
+import { ArticleCardSkeleton } from '@/skeletons/article/ArticleCardSkeleton';
 import { CategoryFilter } from '@/components/filter/CategoryFilter';
 import { Sidebar } from '@/components/common/Sidebar';
 import { Pagination } from '@/components/common/Pagination';

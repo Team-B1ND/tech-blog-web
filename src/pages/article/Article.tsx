@@ -1,7 +1,7 @@
 import { useArticlePage } from '@/hooks/article/useArticlePage';
 import { categoryDisplayName } from '@/types/article';
 import { MarkdownRenderer } from '@/components/markdown/MarkdownRenderer';
-import { ArticleDetailSkeleton } from '@/skeleton/article/ArticleDetailSkeleton';
+import { ArticleDetailSkeleton } from '@/skeletons/article/ArticleDetailSkeleton';
 import CommentSection from '@/components/comment/CommentSection';
 import { ViewSpan } from '@/components/article/ViewSpan';
 import { NotFound } from '@/pages/common/NotFound';

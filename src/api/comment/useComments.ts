@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client.ts';
-import type { ApiResponse, ApiComment, CommentCreateParams } from '@/lib/api/types.ts';
+import { apiClient } from '@/libs/api/client.ts';
+import type { ApiResponse, ApiComment, CommentCreateParams } from '@/libs/api/types.ts';
 
 export const useComments = (articleId: string | number) => {
   return useQuery({

@@ -1,5 +1,5 @@
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
+import { apiClient } from '@/libs/api/client';
 import type {
   ApiResponse,
   ApiArticle,
@@ -8,7 +8,7 @@ import type {
   ArticleListParams,
   ArticleSearchParams,
   ApiCategory,
-} from '@/lib/api/types';
+} from '@/libs/api/types';
 
 export interface CreateArticleRequest {
   title: string;

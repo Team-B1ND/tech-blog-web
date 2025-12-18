@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { Skeleton } from '@/skeleton/Skeleton';
+import { Skeleton } from '@/skeletons/Skeleton';
 
 export const ArticleWrapper = styled.article`
   max-width: 720px;

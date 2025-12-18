@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { ApiCategory } from '@/lib/api/types';
+import type { ApiCategory } from '@/libs/api/types';
 import type { Author } from '@/components/write/AuthorSelector';
 import { useCreateArticle } from '@/api';
 

@@ -1,7 +1,7 @@
 import { useSearchModal } from '@/hooks/useSearchModal';
 import SearchIconSvg from '@/assets/icons/search.svg?react';
 import CloseIcon from '@/assets/icons/close.svg?react';
-import { SearchSkeleton } from '@/skeleton/search/SearchSkeleton';
+import { SearchSkeleton } from '@/skeletons/search/SearchSkeleton';
 import * as S from './SearchModal.style';
 
 interface SearchModalProps {

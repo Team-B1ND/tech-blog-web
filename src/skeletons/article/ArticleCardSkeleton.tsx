@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { Skeleton } from '@/skeleton/Skeleton.tsx';
+import { Skeleton } from '@/skeletons/Skeleton.tsx';
 
 interface ArticleCardSkeletonProps {
   variant?: 'list' | 'block';

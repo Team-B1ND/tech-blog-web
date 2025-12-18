@@ -1,4 +1,4 @@
-import type { ApiCategory } from '@/lib/api/types';
+import type { ApiCategory } from '@/libs/api/types';
 
 export const API_CATEGORIES: { label: string; value: ApiCategory }[] = [
   { label: '개발', value: 'DEVELOPMENT' },

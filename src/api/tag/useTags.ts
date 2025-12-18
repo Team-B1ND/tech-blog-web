@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client.ts';
-import type { ApiResponse, ApiTag } from '@/lib/api/types.ts';
+import { apiClient } from '@/libs/api/client.ts';
+import type { ApiResponse, ApiTag } from '@/libs/api/types.ts';
 
 export const useTags = () => {
   return useQuery({

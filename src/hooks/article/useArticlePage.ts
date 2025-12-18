@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useArticle } from '@/api';
-import { mapApiArticle } from '@/lib/api/mappers';
+import { mapApiArticle } from '@/libs/api/mappers';
 import { useSearch } from '@/contexts/SearchContext';
 
 export const useArticlePage = () => {

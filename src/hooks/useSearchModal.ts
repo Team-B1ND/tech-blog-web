@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSearchArticles } from '@/api';
-import { mapApiArticles } from '@/lib/api/mappers';
+import { mapApiArticles } from '@/libs/api/mappers';
 import { useSearch } from '@/contexts/SearchContext';
 
 interface UseSearchModalParams {

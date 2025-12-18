@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSearchMembers } from '@/api';
-import type { ApiMember } from '@/lib/api/types';
+import type { ApiMember } from '@/libs/api/types';
 
 export interface Author {
   id: string;

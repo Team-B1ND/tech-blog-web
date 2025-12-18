@@ -1,6 +1,6 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useMember, useMemberArticles } from '@/api';
-import { mapApiArticles } from '@/lib/api/mappers';
+import { mapApiArticles } from '@/libs/api/mappers';
 import { useAuth } from '@/hooks/auth/useAuth';
 
 const ARTICLES_PER_PAGE = 9;

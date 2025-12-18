@@ -2,7 +2,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import type { Category, CategorySlug } from '@/types/article';
 import { slugToCategory, categoryToSlug } from '@/types/article';
 import { useArticles } from '@/api';
-import { mapApiArticles } from '@/lib/api/mappers';
+import { mapApiArticles } from '@/libs/api/mappers';
 
 const ARTICLES_PER_PAGE = 20;
 const validSlugs = new Set(['dev', 'infra', 'design', 'product']);

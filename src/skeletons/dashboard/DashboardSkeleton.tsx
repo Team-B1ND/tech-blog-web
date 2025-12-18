@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { Skeleton } from '@/skeleton/Skeleton.tsx';
-import { ArticleCardSkeleton } from '@/skeleton/article/ArticleCardSkeleton.tsx';
+import { Skeleton } from '@/skeletons/Skeleton.tsx';
+import { ArticleCardSkeleton } from '@/skeletons/article/ArticleCardSkeleton.tsx';
 
 export const DashboardSkeleton = () => {
   return (

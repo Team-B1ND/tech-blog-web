@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
-import type { ApiResponse, ApiMember, ApiArticle, PaginatedResponse, ActivateRequest, UpdateProfileRequest } from '@/lib/api/types';
+import { apiClient } from '@/libs/api/client';
+import type { ApiResponse, ApiMember, ApiArticle, PaginatedResponse, ActivateRequest, UpdateProfileRequest } from '@/libs/api/types';
 
 export const useMember = (memberId: string) => {
   return useQuery({

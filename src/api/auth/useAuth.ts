@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient, clearTokens, setTokens } from '@/lib/api/client';
-import type { ApiResponse, ApiAuthInfo, ApiLoginInfo, ApiTokenResponse } from '@/lib/api/types';
+import { apiClient, clearTokens, setTokens } from '@/libs/api/client';
+import type { ApiResponse, ApiAuthInfo, ApiLoginInfo, ApiTokenResponse } from '@/libs/api/types';
 
 export const useLoginInfo = () => {
   return useQuery({

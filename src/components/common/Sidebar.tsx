@@ -1,7 +1,7 @@
 import { useSidebar } from '@/hooks/sidebar/useSidebar';
 import { ViewSpan } from '@/components/article/ViewSpan';
-import { PopularSkeleton } from '@/skeleton/sidebar/PopularSkeleton';
-import { TagsSkeleton } from '@/skeleton/sidebar/TagsSkeleton';
+import { PopularSkeleton } from '@/skeletons/sidebar/PopularSkeleton';
+import { TagsSkeleton } from '@/skeletons/sidebar/TagsSkeleton';
 import * as S from './Sidebar.style';
 
 export const Sidebar = () => {

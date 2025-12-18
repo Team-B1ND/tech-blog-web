@@ -1,5 +1,5 @@
 import { useCurrentMember } from '@/api';
-import type { ApiMember } from '@/lib/api/types';
+import type { ApiMember } from '@/libs/api/types';
 import { useProfileEditForm } from '@/hooks/profile/useProfileEditForm';
 import * as S from './ProfileEdit.style';
 

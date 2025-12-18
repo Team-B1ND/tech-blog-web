@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {Skeleton} from "@/skeleton/Skeleton.tsx";
+import {Skeleton} from "@/skeletons/Skeleton.tsx";
 
 export const SearchSkeleton = () => {
 	return (

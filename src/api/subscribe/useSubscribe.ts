@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client.ts';
-import type { ApiResponse, SubscribeParams } from '@/lib/api/types.ts';
+import { apiClient } from '@/libs/api/client.ts';
+import type { ApiResponse, SubscribeParams } from '@/libs/api/types.ts';
 
 export const useSubscribe = () => {
   return useMutation({
