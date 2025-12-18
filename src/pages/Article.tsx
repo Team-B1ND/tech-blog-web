@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { getArticleById } from '../data/articles';
+import { getAuthorIdByName } from '../data/authors';
 import { useSearch } from '../contexts/SearchContext';
 import CommentSection from '../components/comment/CommentSection.tsx';
 import {ViewSpan} from "../components/article/ViewSpan.tsx";
@@ -38,12 +39,19 @@ const Article = () => {
         <Title>{article.title}</Title>
         <Meta>
           <Authors>
-            {article.authors.map((author, index) => (
-              <span key={author}>
-                {author}
-                {index < article.authors.length - 1 && ', '}
-              </span>
-            ))}
+            {article.authors.map((author, index) => {
+              const authorId = getAuthorIdByName(author);
+              return (
+                <span key={author}>
+                  {authorId ? (
+                    <AuthorLink to={`/author/${authorId}`}>{author}</AuthorLink>
+                  ) : (
+                    author
+                  )}
+                  {index < article.authors.length - 1 && ', '}
+                </span>
+              );
+            })}
           </Authors>
           <Separator>·</Separator>
           <Date>{article.createdAt}</Date>
@@ -138,6 +146,16 @@ const Authors = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.md};
   font-weight: 500;
   color: ${({ theme }) => theme.colors.text};
+`;
+
+const AuthorLink = styled(Link)`
+  color: ${({ theme }) => theme.colors.text};
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
 `;
 
 const Separator = styled.span`

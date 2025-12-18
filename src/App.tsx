@@ -9,6 +9,7 @@ import {Home} from "./pages/Home.tsx";
 import {Subscribe} from "./pages/Subscribe.tsx";
 import {Write} from "./pages/Write.tsx";
 import {NotFound} from "./pages/NotFound.tsx";
+import {Author} from "./pages/Author.tsx";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               <Route index element={<Home />} />
               <Route path=":category" element={<Home />} />
               <Route path="article/:id" element={<Article />} />
+              <Route path="author/:id" element={<Author />} />
               <Route path="subscribe" element={<Subscribe />} />
               <Route path="write" element={<Write />} />
               <Route path="*" element={<NotFound />} />

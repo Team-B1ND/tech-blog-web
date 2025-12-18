@@ -1,19 +1,20 @@
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import type { Article } from '../../types/article.ts';
 
 interface ArticleCardProps {
   article: Article;
+  variant?: 'list' | 'block';
 }
 
-export const ArticleCard = ({ article }: ArticleCardProps) => {
+export const ArticleCard = ({ article, variant = 'list' }: ArticleCardProps) => {
   return (
     <CardLink to={`/article/${article.id}`}>
-      <Card>
-        <Thumbnail src={article.thumbnail} alt={article.title} />
-        <Content>
+      <Card $variant={variant}>
+        <Thumbnail $variant={variant} src={article.thumbnail} alt={article.title} />
+        <Content $variant={variant}>
           <CategoryBadge>{article.category}</CategoryBadge>
-          <Title>{article.title}</Title>
+          <Title $variant={variant}>{article.title}</Title>
           <Meta>
             <Authors>
               {article.authors.join(', ')}
@@ -31,41 +32,71 @@ const CardLink = styled(Link)`
   display: block;
 `;
 
-const Card = styled.article`
+const Card = styled.article<{ $variant: 'list' | 'block' }>`
   display: flex;
   gap: ${({ theme }) => theme.spacing.lg};
-  padding: ${({ theme }) => theme.spacing.lg} 0;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   transition: transform 0.2s ease;
 
-  &:hover {
-    transform: translateX(4px);
-  }
+  ${({ $variant, theme }) =>
+    $variant === 'block'
+      ? css`
+          flex-direction: column;
+          background-color: ${theme.colors.cardBackground};
+          border-radius: ${theme.borderRadius.lg};
+          overflow: hidden;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    flex-direction: column;
-    gap: ${({ theme }) => theme.spacing.md};
-  }
+          &:hover {
+            transform: translateY(-4px);
+          }
+        `
+      : css`
+          padding: ${theme.spacing.lg} 0;
+          border-bottom: 1px solid ${theme.colors.border};
+
+          &:hover {
+            transform: translateX(4px);
+          }
+
+          @media (max-width: ${theme.breakpoints.mobile}) {
+            flex-direction: column;
+            gap: ${theme.spacing.md};
+          }
+        `}
 `;
 
-const Thumbnail = styled.img`
-  width: 200px;
-  height: 134px;
+const Thumbnail = styled.img<{ $variant: 'list' | 'block' }>`
   object-fit: cover;
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
   flex-shrink: 0;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    width: 100%;
-    height: 180px;
-  }
+  ${({ $variant, theme }) =>
+    $variant === 'block'
+      ? css`
+          width: 100%;
+          height: 160px;
+          border-radius: 0;
+        `
+      : css`
+          width: 200px;
+          height: 134px;
+          border-radius: ${theme.borderRadius.lg};
+
+          @media (max-width: ${theme.breakpoints.mobile}) {
+            width: 100%;
+            height: 180px;
+          }
+        `}
 `;
 
-const Content = styled.div`
+const Content = styled.div<{ $variant: 'list' | 'block' }>`
   display: flex;
   flex-direction: column;
   flex: 1;
   min-width: 0;
+  ${({ $variant, theme }) =>
+    $variant === 'block' &&
+    css`
+      padding: ${theme.spacing.sm} ${theme.spacing.md};
+    `}
 `;
 
 const CategoryBadge = styled.span`
@@ -80,8 +111,8 @@ const CategoryBadge = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing.sm};
 `;
 
-const Title = styled.h2`
-  font-size: ${({ theme }) => theme.fontSizes.xl};
+const Title = styled.h2<{ $variant: 'list' | 'block' }>`
+  font-size: ${({ theme, $variant }) => $variant === 'block' ? theme.fontSizes.lg : theme.fontSizes.xl};
   font-weight: 700;
   color: ${({ theme }) => theme.colors.text};
   line-height: 1.4;
