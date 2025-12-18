@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import ChevronLeftIcon from '../../assets/icons/chevron-left.svg?react';
 import ChevronRightIcon from '../../assets/icons/chevron-right.svg?react';
@@ -5,10 +6,15 @@ import ChevronRightIcon from '../../assets/icons/chevron-right.svg?react';
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  onPageChange: (page: number) => void;
+  baseUrl: string;
 }
 
-export const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) => {
+const getPageUrl = (baseUrl: string, page: number) => {
+  if (page === 1) return baseUrl;
+  return `${baseUrl}?page=${page}`;
+};
+
+export const Pagination = ({ currentPage, totalPages, baseUrl }: PaginationProps) => {
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
     const maxVisible = 5;
@@ -45,37 +51,41 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }: Pagination
 
   return (
     <PaginationWrapper>
-      <NavButton
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        aria-label="이전 페이지"
-      >
-        <ChevronLeftIcon />
-      </NavButton>
+      {currentPage === 1 ? (
+        <NavButtonDisabled aria-label="이전 페이지">
+          <ChevronLeftIcon />
+        </NavButtonDisabled>
+      ) : (
+        <NavLink to={getPageUrl(baseUrl, currentPage - 1)} aria-label="이전 페이지">
+          <ChevronLeftIcon />
+        </NavLink>
+      )}
 
       <PageList>
         {getPageNumbers().map((page, index) =>
           typeof page === 'number' ? (
-            <PageButton
+            <PageLink
               key={index}
+              to={getPageUrl(baseUrl, page)}
               $isActive={page === currentPage}
-              onClick={() => onPageChange(page)}
             >
               {page}
-            </PageButton>
+            </PageLink>
           ) : (
             <Ellipsis key={index}>{page}</Ellipsis>
           )
         )}
       </PageList>
 
-      <NavButton
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        aria-label="다음 페이지"
-      >
-        <ChevronRightIcon />
-      </NavButton>
+      {currentPage === totalPages ? (
+        <NavButtonDisabled aria-label="다음 페이지">
+          <ChevronRightIcon />
+        </NavButtonDisabled>
+      ) : (
+        <NavLink to={getPageUrl(baseUrl, currentPage + 1)} aria-label="다음 페이지">
+          <ChevronRightIcon />
+        </NavLink>
+      )}
     </PaginationWrapper>
   );
 };
@@ -94,7 +104,7 @@ const PageList = styled.div`
   gap: ${({ theme }) => theme.spacing.xs};
 `;
 
-const PageButton = styled.button<{ $isActive: boolean }>`
+const PageLink = styled(Link)<{ $isActive: boolean }>`
   min-width: 36px;
   height: 36px;
   display: flex;
@@ -104,19 +114,20 @@ const PageButton = styled.button<{ $isActive: boolean }>`
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: 500;
   transition: all 0.2s ease;
+  text-decoration: none;
 
   background-color: ${({ theme, $isActive }) =>
     $isActive ? theme.colors.primary : 'transparent'};
   color: ${({ theme, $isActive }) =>
     $isActive ? '#ffffff' : theme.colors.textSecondary};
 
-  &:hover:not(:disabled) {
+  &:hover {
     background-color: ${({ theme, $isActive }) =>
       $isActive ? theme.colors.primaryHover : theme.colors.categoryBg};
   }
 `;
 
-const NavButton = styled.button`
+const NavLink = styled(Link)`
   width: 36px;
   height: 36px;
   display: flex;
@@ -126,15 +137,22 @@ const NavButton = styled.button`
   color: ${({ theme }) => theme.colors.textSecondary};
   transition: all 0.2s ease;
 
-  &:hover:not(:disabled) {
+  &:hover {
     background-color: ${({ theme }) => theme.colors.categoryBg};
     color: ${({ theme }) => theme.colors.text};
   }
+`;
 
-  &:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
+const NavButtonDisabled = styled.span`
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  color: ${({ theme }) => theme.colors.textSecondary};
+  opacity: 0.3;
+  cursor: not-allowed;
 `;
 
 const Ellipsis = styled.span`

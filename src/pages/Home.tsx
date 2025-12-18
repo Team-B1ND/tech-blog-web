@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
-import type { Category } from '../types/article';
+import type { Category, CategorySlug } from '../types/article';
+import { categorySlugMap, categoryToSlugMap } from '../types/article';
 import { getArticlesPaginated } from '../data/articles';
 import {ArticleCard} from "../components/article/ArticleCard.tsx";
 import {CategoryFilter} from "../components/filter/CategoryFilter.tsx";
@@ -10,8 +11,11 @@ import {Pagination} from "../components/common/Pagination.tsx";
 const ARTICLES_PER_PAGE = 20;
 
 export const Home = () => {
-  const [selectedCategory, setSelectedCategory] = useState<Category>('전체');
-  const [currentPage, setCurrentPage] = useState(1);
+  const { category: categorySlug } = useParams<{ category?: string }>();
+  const [searchParams] = useSearchParams();
+
+  const selectedCategory: Category = categorySlugMap[categorySlug as CategorySlug] || '전체';
+  const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
 
   const { articles, totalPages, totalCount } = getArticlesPaginated(
     selectedCategory,
@@ -19,15 +23,7 @@ export const Home = () => {
     ARTICLES_PER_PAGE
   );
 
-  const handleCategoryChange = (category: Category) => {
-    setSelectedCategory(category);
-    setCurrentPage(1);
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const currentSlug = categoryToSlugMap[selectedCategory];
 
   return (
     <HomeContainer>
@@ -43,7 +39,6 @@ export const Home = () => {
           <FilterRow>
             <CategoryFilter
               selectedCategory={selectedCategory}
-              onCategoryChange={handleCategoryChange}
             />
             <ArticleCount>총 {totalCount}개의 글</ArticleCount>
           </FilterRow>
@@ -62,7 +57,7 @@ export const Home = () => {
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
-              onPageChange={handlePageChange}
+              baseUrl={currentSlug ? `/${currentSlug}` : '/'}
             />
           )}
         </MainContent>

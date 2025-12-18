@@ -1,24 +1,28 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { categories } from '../../types/article.ts';
+import { categories, categoryToSlugMap } from '../../types/article.ts';
 import type { Category } from '../../types/article.ts';
 
 interface CategoryFilterProps {
   selectedCategory: Category;
-  onCategoryChange: (category: Category) => void;
 }
 
-export const CategoryFilter = ({ selectedCategory, onCategoryChange }: CategoryFilterProps) => {
+export const CategoryFilter = ({ selectedCategory }: CategoryFilterProps) => {
   return (
     <FilterWrapper>
-      {categories.map((category) => (
-        <CategoryButton
-          key={category}
-          $isActive={selectedCategory === category}
-          onClick={() => onCategoryChange(category)}
-        >
-          {category}
-        </CategoryButton>
-      ))}
+      {categories.map((category) => {
+        const slug = categoryToSlugMap[category];
+        const to = slug ? `/${slug}` : '/';
+        return (
+          <CategoryLink
+            key={category}
+            to={to}
+            $isActive={selectedCategory === category}
+          >
+            {category}
+          </CategoryLink>
+        );
+      })}
     </FilterWrapper>
   );
 };
@@ -29,12 +33,13 @@ const FilterWrapper = styled.div`
   flex-wrap: wrap;
 `;
 
-const CategoryButton = styled.button<{ $isActive: boolean }>`
+const CategoryLink = styled(Link)<{ $isActive: boolean }>`
   padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
   border-radius: ${({ theme }) => theme.borderRadius.full};
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: 500;
   transition: all 0.2s ease;
+  text-decoration: none;
 
   background-color: ${({ theme, $isActive }) =>
     $isActive ? theme.colors.categoryActiveBg : theme.colors.categoryBg};

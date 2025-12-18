@@ -19,6 +19,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
+              <Route path=":category" element={<Home />} />
               <Route path="article/:id" element={<Article />} />
               <Route path="subscribe" element={<Subscribe />} />
               <Route path="write" element={<Write />} />
