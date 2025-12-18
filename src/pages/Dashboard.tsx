@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { getArticlesByAuthor } from '../data/authors';
 import { ArticleCard } from '../components/article/ArticleCard';
 

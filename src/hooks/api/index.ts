@@ -18,3 +18,7 @@ export { useComments, useCreateComment, useCreateReply } from './useComments';
 
 // Subscribe
 export { useSubscribe } from './useSubscribe';
+
+// Auth
+export { useLoginInfo, useAuthInfo, useLogout } from './useAuth';
+export type { AuthInfo } from './useAuth';

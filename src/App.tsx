@@ -17,6 +17,7 @@ import { Write } from './pages/Write.tsx';
 import { ProfileEdit } from './pages/ProfileEdit.tsx';
 import { NotFound } from './pages/NotFound.tsx';
 import { Author } from './pages/Author.tsx';
+import { AuthCallback } from './pages/AuthCallback.tsx';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
                 <Route path="author/:id" element={<Author />} />
                 <Route path="subscribe" element={<Subscribe />} />
                 <Route path="login" element={<Login />} />
+                <Route path="auth/callback" element={<AuthCallback />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
 

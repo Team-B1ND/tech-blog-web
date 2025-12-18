@@ -1,62 +1,38 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { Author } from '../types/author';
-import { getAuthorById } from '../data/authors';
-
-interface AuthContextType {
-  user: Author | null;
-  isLoggedIn: boolean;
-  isLoading: boolean;
-  login: (authorId: string) => boolean;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | null>(null);
-
-const AUTH_STORAGE_KEY = 'b1nd_tech_auth_user';
+import type { ReactNode } from 'react';
+import { useAuthInfo, useLogout } from '../hooks/api';
+import { AuthContext } from './authTypes';
+import type { User } from './authTypes';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<Author | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: authInfo, isLoading, refetch } = useAuthInfo();
+  const { mutate: logoutMutate } = useLogout();
 
-  useEffect(() => {
-    const savedUserId = localStorage.getItem(AUTH_STORAGE_KEY);
-    if (savedUserId) {
-      const author = getAuthorById(savedUserId);
-      if (author) {
-        setUser(author);
-      } else {
-        localStorage.removeItem(AUTH_STORAGE_KEY);
+  const user: User | null = authInfo?.authenticated && authInfo.memberId
+    ? {
+        id: authInfo.memberId,
+        name: authInfo.name || '',
+        role: authInfo.role || '',
+        activated: authInfo.activated,
       }
-    }
-    setIsLoading(false);
-  }, []);
-
-  const login = (authorId: string): boolean => {
-    const author = getAuthorById(authorId);
-    if (author) {
-      setUser(author);
-      localStorage.setItem(AUTH_STORAGE_KEY, authorId);
-      return true;
-    }
-    return false;
-  };
+    : null;
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem(AUTH_STORAGE_KEY);
+    logoutMutate();
+    window.location.href = '/';
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn: !!user, isLoading, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoggedIn: !!user,
+        isLoading,
+        loginUrl: authInfo?.loginUrl || null,
+        logout,
+        refetch,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Outlet, useNavigate, Link, NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../contexts/ThemeContext';
 import LogoIcon from '../../assets/logo.svg?react';
 import MoonIcon from '../../assets/icons/moon.svg?react';
