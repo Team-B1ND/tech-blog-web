@@ -14,6 +14,8 @@ const baseTheme = {
     xxxl: '48px',
   },
   spacing: {
+	  dodamVertical: '14px',
+	  dodamHorizontal: '18px',
     xs: '4px',
     sm: '8px',
     md: '16px',
