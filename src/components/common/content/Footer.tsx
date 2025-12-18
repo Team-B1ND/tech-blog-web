@@ -35,14 +35,13 @@ const FooterLinks = styled.div`
   padding: ${({ theme }) => theme.spacing.xxl} ${({ theme }) => theme.spacing.lg};
   display: flex;
   justify-content: center;
-	gap: ${({ theme }) => theme.spacing.xl};
+  flex-wrap: wrap;
+  gap: ${({ theme }) => theme.spacing.xl};
   align-items: center;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    flex-direction: column;
-    gap: ${({ theme }) => theme.spacing.lg};
-    text-align: center;
-    padding: ${({ theme }) => theme.spacing.xl} ${({ theme }) => theme.spacing.md};
+    gap: ${({ theme }) => theme.spacing.md};
+    padding: ${({ theme }) => theme.spacing.lg} ${({ theme }) => theme.spacing.md};
   }
 `;
 
