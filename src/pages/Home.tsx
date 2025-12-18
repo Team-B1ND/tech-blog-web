@@ -1,13 +1,15 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import type { Category, CategorySlug } from '../types/article';
-import { categorySlugMap, categoryToSlugMap } from '../types/article';
-import { getArticlesPaginated } from '../data/articles';
-import {ArticleCard} from "../components/article/ArticleCard.tsx";
-import {CategoryFilter} from "../components/filter/CategoryFilter.tsx";
-import {Sidebar} from "../components/common/Sidebar.tsx";
-import {Pagination} from "../components/common/Pagination.tsx";
-import {NotFound} from "./NotFound.tsx";
+import { slugToCategory, categoryToSlug } from '../types/article';
+import { useArticles } from '../hooks/api';
+import { mapApiArticles } from '../lib/api/mappers';
+import { ArticleCard } from "../components/article/ArticleCard.tsx";
+import { ArticleCardSkeleton } from "../components/article/ArticleCardSkeleton.tsx";
+import { CategoryFilter } from "../components/filter/CategoryFilter.tsx";
+import { Sidebar } from "../components/common/Sidebar.tsx";
+import { Pagination } from "../components/common/Pagination.tsx";
+import { NotFound } from "./NotFound.tsx";
 
 const ARTICLES_PER_PAGE = 20;
 const validSlugs = new Set(['dev', 'infra', 'design', 'product']);
@@ -16,20 +18,36 @@ export const Home = () => {
   const { category: categorySlug } = useParams<{ category?: string }>();
   const [searchParams] = useSearchParams();
 
-  if (categorySlug && !validSlugs.has(categorySlug)) {
+  const isValidSlug = !categorySlug || validSlugs.has(categorySlug);
+  const selectedCategory: Category = isValidSlug
+    ? (slugToCategory[categorySlug as CategorySlug] || 'ALL')
+    : 'ALL';
+  const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+
+  // ALL일 때는 category 파라미터를 보내지 않음
+  const { data, isLoading, error } = useArticles({
+    category: selectedCategory === 'ALL' ? undefined : selectedCategory,
+    page: currentPage,
+    limit: ARTICLES_PER_PAGE,
+  });
+
+  if (!isValidSlug) {
     return <NotFound />;
   }
 
-  const selectedCategory: Category = categorySlugMap[categorySlug as CategorySlug] || '전체';
-  const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+  const articles = data ? mapApiArticles(data.data) : [];
+  const totalPages = data?.pagination.totalPages || 1;
+  const totalCount = data?.pagination.totalCount || 0;
 
-  const { articles, totalPages, totalCount } = getArticlesPaginated(
-    selectedCategory,
-    currentPage,
-    ARTICLES_PER_PAGE
-  );
+  const currentSlug = categoryToSlug[selectedCategory];
 
-  const currentSlug = categoryToSlugMap[selectedCategory];
+  if (error) {
+    return (
+      <HomeContainer>
+        <ErrorState>데이터를 불러오는데 실패했습니다.</ErrorState>
+      </HomeContainer>
+    );
+  }
 
   return (
     <HomeContainer>
@@ -49,22 +67,30 @@ export const Home = () => {
             <ArticleCount>총 {totalCount}개의 글</ArticleCount>
           </FilterRow>
 
-          <ArticleList>
-            {articles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
-            ))}
-          </ArticleList>
-
-          {articles.length === 0 ? (
+          {isLoading ? (
+            <ArticleList>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <ArticleCardSkeleton key={i} />
+              ))}
+            </ArticleList>
+          ) : articles.length === 0 ? (
             <EmptyState>
-              해당 카테고리에 대한 글이 아직 없습니다.
+              아티클이 아직 없어요
             </EmptyState>
           ) : (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              baseUrl={currentSlug ? `/${currentSlug}` : '/'}
-            />
+            <>
+              <ArticleList>
+                {articles.map((article) => (
+                  <ArticleCard key={article.id} article={article} />
+                ))}
+              </ArticleList>
+
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                baseUrl={currentSlug ? `/${currentSlug}` : '/'}
+              />
+            </>
           )}
         </MainContent>
 
@@ -147,5 +173,12 @@ const EmptyState = styled.div`
   text-align: center;
   padding: ${({ theme }) => theme.spacing.xxxl} 0;
   color: ${({ theme }) => theme.colors.textTertiary};
+  font-size: ${({ theme }) => theme.fontSizes.lg};
+`;
+
+const ErrorState = styled.div`
+  text-align: center;
+  padding: ${({ theme }) => theme.spacing.xxxl} 0;
+  color: ${({ theme }) => theme.colors.error};
   font-size: ${({ theme }) => theme.fontSizes.lg};
 `;

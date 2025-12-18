@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { categories, categoryToSlugMap } from '../../types/article.ts';
-import type { Category } from '../../types/article.ts';
+import { categories, categoryToSlug, categoryDisplayName } from '../../types/article';
+import type { Category } from '../../types/article';
 
 interface CategoryFilterProps {
   selectedCategory: Category;
@@ -11,7 +11,7 @@ export const CategoryFilter = ({ selectedCategory }: CategoryFilterProps) => {
   return (
     <FilterWrapper>
       {categories.map((category) => {
-        const slug = categoryToSlugMap[category];
+        const slug = categoryToSlug[category];
         const to = slug ? `/${slug}` : '/';
         return (
           <CategoryLink
@@ -19,7 +19,7 @@ export const CategoryFilter = ({ selectedCategory }: CategoryFilterProps) => {
             to={to}
             $isActive={selectedCategory === category}
           >
-            {category}
+            {categoryDisplayName[category]}
           </CategoryLink>
         );
       })}

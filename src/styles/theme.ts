@@ -51,6 +51,7 @@ export const lightTheme = {
     categoryActiveBg: '#191f28',
     categoryActiveText: '#ffffff',
     codeBackground: '#1e1e1e',
+    error: '#dc3545',
   },
 };
 
@@ -69,6 +70,7 @@ export const darkTheme = {
     categoryActiveBg: '#E8E8E8',
     categoryActiveText: '#191A1A',
     codeBackground: '#222323',
+    error: '#f03e3e',
   },
 };
 

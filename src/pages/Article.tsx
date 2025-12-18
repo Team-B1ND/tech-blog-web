@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { getArticleById } from '../data/articles';
+import { useArticle } from '../hooks/api';
+import { mapApiArticle } from '../lib/api/mappers';
+import { categoryDisplayName } from '../types/article';
 import { useSearch } from '../contexts/SearchContext';
 import { MarkdownRenderer } from '../components/common/MarkdownRenderer';
 import CommentSection from '../components/comment/CommentSection.tsx';
@@ -11,7 +13,7 @@ import { NotFound } from './NotFound.tsx';
 
 const Article = () => {
   const { id } = useParams<{ id: string }>();
-  const article = getArticleById(id || '');
+  const { data: apiArticle, isLoading, error } = useArticle(id || '');
   const { openSearch } = useSearch();
   const [copied, setCopied] = useState(false);
 
@@ -25,9 +27,19 @@ const Article = () => {
     }
   };
 
-  if (!article) {
+  if (isLoading) {
+    return (
+      <ArticleWrapper>
+        <LoadingState>글을 불러오는 중...</LoadingState>
+      </ArticleWrapper>
+    );
+  }
+
+  if (error || !apiArticle) {
     return <NotFound />;
   }
+
+  const article = mapApiArticle(apiArticle);
 
   return (
     <ArticleWrapper>
@@ -48,7 +60,7 @@ const Article = () => {
 	        <ViewSpan views={article.views}/>
         </Meta>
         <TagsRow>
-          <CategoryTag>#{article.category}</CategoryTag>
+          <CategoryTag>#{categoryDisplayName[article.category]}</CategoryTag>
           {article.tags.map((tag) => (
             <Tag key={tag} onClick={() => openSearch(`tag:${tag}`)}>{tag}</Tag>
           ))}
@@ -80,6 +92,13 @@ export default Article;
 const ArticleWrapper = styled.article`
   max-width: 720px;
   margin: 0 auto;
+`;
+
+const LoadingState = styled.div`
+  text-align: center;
+  padding: ${({ theme }) => theme.spacing.xxxl} 0;
+  color: ${({ theme }) => theme.colors.textTertiary};
+  font-size: ${({ theme }) => theme.fontSizes.md};
 `;
 
 const ArticleHeader = styled.header`

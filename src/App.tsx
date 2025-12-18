@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from './lib/api/queryClient';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { SearchProvider } from './contexts/SearchContext';
 import { AuthProvider } from './contexts/AuthContext';
@@ -18,11 +20,12 @@ import { Author } from './pages/Author.tsx';
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <SearchProvider>
-          <GlobalStyle />
-          <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <AuthProvider>
+          <SearchProvider>
+            <GlobalStyle />
+            <BrowserRouter>
             <ScrollToTop />
             <Routes>
               {/* 일반 페이지 - 구독하기 버튼 */}
@@ -43,10 +46,11 @@ function App() {
                 <Route path="profile" element={<ProfileEdit />} />
               </Route>
             </Routes>
-          </BrowserRouter>
-        </SearchProvider>
-      </AuthProvider>
-    </ThemeProvider>
+            </BrowserRouter>
+          </SearchProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 

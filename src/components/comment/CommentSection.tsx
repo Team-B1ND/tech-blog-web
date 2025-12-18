@@ -1,6 +1,8 @@
-import { useState } from 'react';
 import styled from 'styled-components';
-import type { Comment, CommentInput } from '../../types/comment.ts';
+import type { CommentInput } from '../../types/comment.ts';
+import { useComments, useCreateComment } from '../../hooks/api';
+import { apiClient } from '../../lib/api/client';
+import { useQueryClient } from '@tanstack/react-query';
 import CommentForm from './CommentForm.tsx';
 import CommentItem from './CommentItem.tsx';
 
@@ -8,51 +10,33 @@ interface CommentSectionProps {
   articleId: string;
 }
 
-const generateId = () => Math.random().toString(36).substr(2, 9);
-
-const formatDate = () => {
-  const now = new Date();
-  return `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-};
-
 const CommentSection = ({ articleId }: CommentSectionProps) => {
-  const [comments, setComments] = useState<Comment[]>([]);
+  const queryClient = useQueryClient();
+  const { data: apiComments, isLoading } = useComments(articleId);
+  const { mutate: createComment, isPending: isCreating } = useCreateComment(articleId);
 
   const handleAddComment = (input: CommentInput) => {
-    const newComment: Comment = {
-      id: generateId(),
-      articleId,
+    createComment({
       author: input.author,
       content: input.content,
-      createdAt: formatDate(),
-      parentId: null,
-      replies: [],
-    };
-    setComments([newComment, ...comments]);
+    });
   };
 
-  const handleAddReply = (parentId: string, input: CommentInput) => {
-    const newReply: Comment = {
-      id: generateId(),
-      articleId,
-      author: input.author,
-      content: input.content,
-      createdAt: formatDate(),
-      parentId,
-      replies: [],
-    };
-
-    setComments(
-      comments.map((comment) =>
-        comment.id === parentId
-          ? { ...comment, replies: [...comment.replies, newReply] }
-          : comment
-      )
-    );
+  const handleAddReply = async (parentId: string, input: CommentInput) => {
+    try {
+      await apiClient.post(`/articles/${articleId}/comments/${parentId}/replies`, {
+        author: input.author,
+        content: input.content,
+      });
+      queryClient.invalidateQueries({ queryKey: ['comments', articleId] });
+    } catch (error) {
+      console.error('Failed to create reply:', error);
+    }
   };
 
+  const comments = apiComments || [];
   const totalCount = comments.reduce(
-    (acc, comment) => acc + 1 + comment.replies.length,
+    (acc, comment) => acc + 1 + (comment.replies?.length || 0),
     0
   );
 
@@ -63,23 +47,43 @@ const CommentSection = ({ articleId }: CommentSectionProps) => {
         <CommentCount>{totalCount}</CommentCount>
       </SectionHeader>
 
-      <CommentForm onSubmit={handleAddComment} />
+      <CommentForm onSubmit={handleAddComment} isSubmitting={isCreating} />
 
-      <CommentList>
-        {comments.length === 0 ? (
-          <EmptyState>
-            아직 댓글이 없습니다. 첫 댓글을 남겨보세요!
-          </EmptyState>
-        ) : (
-          comments.map((comment) => (
-            <CommentItem
-              key={comment.id}
-              comment={comment}
-              onReply={handleAddReply}
-            />
-          ))
-        )}
-      </CommentList>
+      {isLoading ? (
+        <LoadingState>댓글을 불러오는 중...</LoadingState>
+      ) : (
+        <CommentList>
+          {comments.length === 0 ? (
+            <EmptyState>
+              아직 댓글이 없습니다. 첫 댓글을 남겨보세요!
+            </EmptyState>
+          ) : (
+            comments.map((comment) => (
+              <CommentItem
+                key={comment.id}
+                comment={{
+                  id: String(comment.id),
+                  articleId,
+                  author: comment.author,
+                  content: comment.content,
+                  createdAt: comment.createdAt.replace('T', ' ').substring(0, 16),
+                  parentId: null,
+                  replies: (comment.replies || []).map((reply) => ({
+                    id: String(reply.id),
+                    articleId,
+                    author: reply.author,
+                    content: reply.content,
+                    createdAt: reply.createdAt.replace('T', ' ').substring(0, 16),
+                    parentId: String(comment.id),
+                    replies: [],
+                  })),
+                }}
+                onReply={handleAddReply}
+              />
+            ))
+          )}
+        </CommentList>
+      )}
     </Section>
   );
 };
@@ -116,6 +120,13 @@ const CommentList = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.md};
   margin-top: ${({ theme }) => theme.spacing.xl};
+`;
+
+const LoadingState = styled.div`
+  text-align: center;
+  padding: ${({ theme }) => theme.spacing.xxl};
+  color: ${({ theme }) => theme.colors.textTertiary};
+  font-size: ${({ theme }) => theme.fontSizes.md};
 `;
 
 const EmptyState = styled.div`

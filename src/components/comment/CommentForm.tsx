@@ -7,9 +7,10 @@ interface CommentFormProps {
   isReply?: boolean;
   replyAuthor?: string;
   onCancel?: () => void;
+  isSubmitting?: boolean;
 }
 
-const CommentForm = ({ onSubmit, isReply = false, replyAuthor, onCancel }: CommentFormProps) => {
+const CommentForm = ({ onSubmit, isReply = false, replyAuthor, onCancel, isSubmitting = false }: CommentFormProps) => {
   const [author, setAuthor] = useState('');
   const [content, setContent] = useState('');
 
@@ -53,8 +54,8 @@ const CommentForm = ({ onSubmit, isReply = false, replyAuthor, onCancel }: Comme
             취소
           </CancelButton>
         )}
-        <SubmitButton type="submit" disabled={!effectiveAuthor.trim() || !content.trim()}>
-          {isReply ? '답글 작성' : '댓글 작성'}
+        <SubmitButton type="submit" disabled={!effectiveAuthor.trim() || !content.trim() || isSubmitting}>
+          {isSubmitting ? '작성 중...' : isReply ? '답글 작성' : '댓글 작성'}
         </SubmitButton>
       </ButtonRow>
     </Form>

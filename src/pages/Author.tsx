@@ -1,6 +1,7 @@
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { getAuthorById, getArticlesByAuthor } from '../data/authors';
+import { useAuthor, useAuthorArticles } from '../hooks/api';
+import { mapApiArticles } from '../lib/api/mappers';
 import { useAuth } from '../contexts/AuthContext';
 import { ArticleCard } from '../components/article/ArticleCard';
 import { Pagination } from '../components/common/Pagination';
@@ -12,27 +13,40 @@ export const Author = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const { user, isLoggedIn, logout } = useAuth();
-  const author = getAuthorById(id || '');
 
-  if (!author) {
+  const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+
+  const { data: author, isLoading: authorLoading, error: authorError } = useAuthor(id || '');
+  const { data: articlesData, isLoading: articlesLoading } = useAuthorArticles(id || '', {
+    page: currentPage,
+    limit: ARTICLES_PER_PAGE,
+  });
+
+  if (authorLoading) {
+    return (
+      <Container>
+        <LoadingState>작성자 정보를 불러오는 중...</LoadingState>
+      </Container>
+    );
+  }
+
+  if (authorError || !author) {
     return <NotFound />;
   }
 
   const isOwnProfile = isLoggedIn && user?.id === author.id;
-  const allArticles = getArticlesByAuthor(author.name);
-  const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
-  const totalPages = Math.ceil(allArticles.length / ARTICLES_PER_PAGE);
-  const startIndex = (currentPage - 1) * ARTICLES_PER_PAGE;
-  const paginatedArticles = allArticles.slice(startIndex, startIndex + ARTICLES_PER_PAGE);
+  const articles = articlesData ? mapApiArticles(articlesData.data) : [];
+  const totalCount = articlesData?.pagination.totalCount || 0;
+  const totalPages = articlesData?.pagination.totalPages || 1;
 
   return (
     <Container>
       <AuthorHeader>
         <NameRow>
-          <Generation>{author.generation}기</Generation>
+          {author.grade && <Generation>{author.grade}기</Generation>}
           <Name>{author.name}</Name>
         </NameRow>
-        <Bio>{author.bio}</Bio>
+        {author.email && <Bio>{author.email}</Bio>}
         {isOwnProfile && (
           <ButtonRow>
             <EditProfileButton to="/dashboard/profile">
@@ -46,21 +60,26 @@ export const Author = () => {
       </AuthorHeader>
 
       <ArticlesSection>
-        <SectionTitle>작성한 글 ({allArticles.length})</SectionTitle>
-        <ArticleGrid>
-          {paginatedArticles.map(article => (
-            <ArticleCard key={article.id} article={article} variant="block" />
-          ))}
-        </ArticleGrid>
-        {allArticles.length === 0 && (
+        <SectionTitle>작성한 글 ({totalCount})</SectionTitle>
+        {articlesLoading ? (
+          <LoadingState>글을 불러오는 중...</LoadingState>
+        ) : articles.length === 0 ? (
           <EmptyState>작성한 글이 없습니다.</EmptyState>
-        )}
-        {totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            baseUrl={`/author/${id}`}
-          />
+        ) : (
+          <>
+            <ArticleGrid>
+              {articles.map(article => (
+                <ArticleCard key={article.id} article={article} variant="block" />
+              ))}
+            </ArticleGrid>
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                baseUrl={`/author/${id}`}
+              />
+            )}
+          </>
         )}
       </ArticlesSection>
     </Container>
@@ -70,6 +89,13 @@ export const Author = () => {
 const Container = styled.div`
   max-width: 960px;
   margin: 0 auto;
+`;
+
+const LoadingState = styled.div`
+  text-align: center;
+  padding: ${({ theme }) => theme.spacing.xxl} 0;
+  color: ${({ theme }) => theme.colors.textTertiary};
+  font-size: ${({ theme }) => theme.fontSizes.md};
 `;
 
 const AuthorHeader = styled.header`

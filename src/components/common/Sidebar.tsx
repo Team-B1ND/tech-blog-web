@@ -1,40 +1,55 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { getPopularArticles, getAllTags } from '../../data/articles.ts';
+import { usePopularArticles, useTags } from '../../hooks/api';
+import { mapApiArticles } from '../../lib/api/mappers';
 import { useSearch } from '../../contexts/SearchContext.tsx';
-import {ViewSpan} from "../article/ViewSpan.tsx";
+import { ViewSpan } from '../article/ViewSpan.tsx';
 
 export const Sidebar = () => {
-  const popularArticles = getPopularArticles(5);
-  const tags = getAllTags();
+  const { data: popularData, isLoading: popularLoading } = usePopularArticles(5);
+  const { data: tagsData, isLoading: tagsLoading } = useTags();
   const { openSearch } = useSearch();
+
+  const popularArticles = popularData ? mapApiArticles(popularData) : [];
+  const tags = tagsData || [];
 
   return (
     <SidebarWrapper>
       <Section>
         <SectionTitle>지금 인기 글</SectionTitle>
-        <PopularList>
-          {popularArticles.map((article) => (
-            <PopularItem key={article.id} to={`/article/${article.id}`}>
-              <PopularContent>
-                <PopularTitle>{article.title}</PopularTitle>
-	              <ViewSpan views={article.views}/>
-              </PopularContent>
-            </PopularItem>
-          ))}
-        </PopularList>
+        {popularLoading ? (
+          <LoadingText>불러오는 중...</LoadingText>
+        ) : popularArticles.length === 0 ? (
+          <EmptyText>인기 글이 없습니다</EmptyText>
+        ) : (
+          <PopularList>
+            {popularArticles.map((article) => (
+              <PopularItem key={article.id} to={`/article/${article.id}`}>
+                <PopularContent>
+                  <PopularTitle>{article.title}</PopularTitle>
+                  <ViewSpan views={article.views} />
+                </PopularContent>
+              </PopularItem>
+            ))}
+          </PopularList>
+        )}
       </Section>
 
       <Section>
         <SectionTitle>태그</SectionTitle>
-        <TagList>
-          {tags.map(({ tag, count }) => (
-            <Tag key={tag} onClick={() => openSearch(`tag:${tag}`)}>
-              {tag}
-              <TagCount>{count}</TagCount>
-            </Tag>
-          ))}
-        </TagList>
+        {tagsLoading ? (
+          <LoadingText>불러오는 중...</LoadingText>
+        ) : tags.length === 0 ? (
+          <EmptyText>태그가 없습니다</EmptyText>
+        ) : (
+          <TagList>
+            {tags.map((tag) => (
+              <Tag key={tag.id} onClick={() => openSearch(`tag:${tag.name}`)}>
+                {tag.name}
+              </Tag>
+            ))}
+          </TagList>
+        )}
       </Section>
     </SidebarWrapper>
   );
@@ -117,11 +132,14 @@ const Tag = styled.span`
   }
 `;
 
-const TagCount = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.xs};
+const LoadingText = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.sm};
   color: ${({ theme }) => theme.colors.textTertiary};
+  padding: ${({ theme }) => theme.spacing.md} 0;
+`;
 
-  ${Tag}:hover & {
-    color: rgba(255, 255, 255, 0.8);
-  }
+const EmptyText = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  color: ${({ theme }) => theme.colors.textTertiary};
+  padding: ${({ theme }) => theme.spacing.md} 0;
 `;

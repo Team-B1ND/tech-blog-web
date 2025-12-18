@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { useSubscribe } from '../hooks/api';
 import CheckIcon from '../assets/icons/check.svg?react';
 
 export const Subscribe = () => {
@@ -8,8 +9,10 @@ export const Subscribe = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [agreed, setAgreed] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const { mutate: subscribe, isPending: isSubmitting } = useSubscribe();
 
   const isValidEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -21,13 +24,23 @@ export const Subscribe = () => {
     e.preventDefault();
     if (!canSubmit) return;
 
-    setIsSubmitting(true);
-
-    // 실제 구독 API 연동 시 여기에 구현
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    setIsSubmitting(false);
-    setIsSuccess(true);
+    setErrorMessage('');
+    subscribe(
+      { name: name.trim(), email: email.trim() },
+      {
+        onSuccess: () => {
+          setIsSuccess(true);
+        },
+        onError: (error: any) => {
+          const code = error.response?.data?.error?.code;
+          if (code === 'ALREADY_SUBSCRIBED') {
+            setErrorMessage('이미 구독된 이메일입니다.');
+          } else {
+            setErrorMessage('구독 중 오류가 발생했습니다. 다시 시도해주세요.');
+          }
+        },
+      }
+    );
   };
 
   if (isSuccess) {
@@ -94,6 +107,8 @@ export const Subscribe = () => {
               개인정보 수집 및 이용에 동의합니다
             </CheckboxLabel>
           </CheckboxGroup>
+
+          {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 
           <SubmitButton type="submit" disabled={!canSubmit}>
             {isSubmitting ? '구독 중...' : '구독하기'}
@@ -182,6 +197,12 @@ const CheckboxLabel = styled.label`
   font-size: ${({ theme }) => theme.fontSizes.sm};
   color: ${({ theme }) => theme.colors.textSecondary};
   cursor: pointer;
+`;
+
+const ErrorMessage = styled.p`
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  color: ${({ theme }) => theme.colors.error};
+  margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
 
 const SubmitButton = styled.button`

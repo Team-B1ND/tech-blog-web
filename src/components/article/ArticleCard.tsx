@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import type { Article } from '../../types/article.ts';
+import { categoryDisplayName } from '../../types/article.ts';
 
 interface ArticleCardProps {
   article: Article;
@@ -13,7 +14,7 @@ export const ArticleCard = ({ article, variant = 'list' }: ArticleCardProps) => 
       <Card $variant={variant}>
         <Thumbnail $variant={variant} src={article.thumbnail} alt={article.title} />
         <Content $variant={variant}>
-          <CategoryBadge>{article.category}</CategoryBadge>
+          <CategoryBadge>{categoryDisplayName[article.category]}</CategoryBadge>
           <Title $variant={variant}>{article.title}</Title>
           <Meta>
             <Authors>

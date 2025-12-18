@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { articles } from '../../data/articles.ts';
+import { useSearchArticles } from '../../hooks/api';
+import { mapApiArticles } from '../../lib/api/mappers';
 import { useSearch } from '../../contexts/SearchContext.tsx';
-import type { Article } from '../../types/article.ts';
 import SearchIconSvg from '../../assets/icons/search.svg?react';
 import CloseIcon from '../../assets/icons/close.svg?react';
 
@@ -15,9 +15,23 @@ interface SearchModalProps {
 const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
   const { initialQuery } = useSearch();
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Article[]>([]);
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+
+  // Debounce query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query.trim());
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  const { data, isLoading } = useSearchArticles({
+    q: debouncedQuery.length >= 2 ? debouncedQuery : '',
+  });
+
+  const results = data ? mapApiArticles(data.data) : [];
 
   useEffect(() => {
     if (isOpen) {
@@ -33,39 +47,6 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, [onClose]);
-
-  useEffect(() => {
-    if (query.trim().length < 2) {
-      setResults([]);
-      return;
-    }
-
-    const searchQuery = query.toLowerCase();
-
-    // tag: 접두사로 검색하는 경우 정확한 태그 매칭
-    if (searchQuery.startsWith('tag:')) {
-      const tagQuery = searchQuery.slice(4).trim().toLowerCase();
-      if (tagQuery.length < 1) {
-        setResults([]);
-        return;
-      }
-      const filtered = articles.filter((article) =>
-        article.tags.some((tag) => tag.toLowerCase() === tagQuery)
-      );
-      setResults(filtered);
-      return;
-    }
-
-    // 일반 검색
-    const filtered = articles.filter(
-      (article) =>
-        article.title.toLowerCase().includes(searchQuery) ||
-        article.authors.some((author) => author.toLowerCase().includes(searchQuery)) ||
-        article.category.toLowerCase().includes(searchQuery) ||
-        article.tags.some((tag) => tag.toLowerCase().includes(searchQuery))
-    );
-    setResults(filtered);
-  }, [query]);
 
   const handleSelect = (articleId: string) => {
     onClose();
@@ -84,7 +65,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
           <SearchInput
             ref={inputRef}
             type="text"
-            placeholder="검색... (태그: tag:태그명)"
+            placeholder="검색어를 입력하세요"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -96,6 +77,8 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
         <SearchResults>
           {query.trim().length < 2 ? (
             <HintText>2글자 이상 입력해주세요</HintText>
+          ) : isLoading ? (
+            <HintText>검색 중...</HintText>
           ) : results.length === 0 ? (
             <HintText>검색 결과가 없습니다</HintText>
           ) : (
@@ -104,7 +87,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                 <ResultCategory>{article.category}</ResultCategory>
                 <ResultTitle>{article.title}</ResultTitle>
                 <ResultMeta>
-                  {article.authors.join(', ')} · {article.createdAt}
+                  {article.authors.map(a => a.name).join(', ')} · {article.createdAt}
                 </ResultMeta>
               </ResultItem>
             ))
