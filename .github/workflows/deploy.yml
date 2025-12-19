@@ -54,4 +54,4 @@ jobs:
             --rsync-path="sudo rsync" \
             -e "ssh -o StrictHostKeyChecking=no" \
             ./dist/ \
-            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/lib/docker/volumes/tech/_data/main
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/lib/docker/volumes/tech/_data/
