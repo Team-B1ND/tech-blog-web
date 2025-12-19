@@ -37,7 +37,7 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
-            sudo mkdir -p /var/lib/docker/volumes/tech/_data/main
+            docker volume create tech || true
             sudo chown -R $USER:$USER /var/lib/docker/volumes/tech/_data
 
       - name: Setup SSH for rsync
