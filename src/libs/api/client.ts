@@ -55,7 +55,6 @@ apiClient.interceptors.response.use(
         return apiClient(originalRequest);
       } catch {
         clearTokens();
-        window.location.href = '/login';
         return Promise.reject(error);
       }
     }
