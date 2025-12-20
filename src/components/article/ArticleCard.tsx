@@ -118,6 +118,8 @@ const Title = styled.h2<{ $variant: 'list' | 'block' }>`
   color: ${({ theme }) => theme.colors.text};
   line-height: 1.4;
   margin-bottom: ${({ theme }) => theme.spacing.md};
+  word-break: keep-all;
+  overflow-wrap: break-word;
 
   display: -webkit-box;
   -webkit-line-clamp: 2;
