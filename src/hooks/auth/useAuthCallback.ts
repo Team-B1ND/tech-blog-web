@@ -23,7 +23,8 @@ export const useAuthCallback = () => {
 
       // 백엔드에서 HttpOnly 쿠키로 토큰을 설정했으므로
       // 프론트엔드는 쿠키를 직접 다룰 필요 없음
-      await queryClient.invalidateQueries({ queryKey: ['auth'] });
+      // refetchQueries를 사용하여 완료될 때까지 기다림
+      await queryClient.refetchQueries({ queryKey: ['auth'] });
 
       setStatus('success');
 
