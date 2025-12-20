@@ -17,6 +17,8 @@ export const Title = styled.h1`
   color: ${({ theme }) => theme.colors.text};
   line-height: 1.3;
   margin-bottom: ${({ theme }) => theme.spacing.lg};
+  word-break: keep-all;
+  overflow-wrap: break-word;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     font-size: ${({ theme }) => theme.fontSizes.xxl};
