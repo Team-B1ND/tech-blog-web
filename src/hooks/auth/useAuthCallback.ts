@@ -13,8 +13,6 @@ export const useAuthCallback = () => {
 
   useEffect(() => {
     const handleCallback = async () => {
-      const accessToken = searchParams.get('accessToken');
-      const refreshToken = searchParams.get('refreshToken');
       const error = searchParams.get('error');
 
       if (error) {
@@ -23,24 +21,18 @@ export const useAuthCallback = () => {
         return;
       }
 
-      if (accessToken && refreshToken) {
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
+      // 백엔드에서 HttpOnly 쿠키로 토큰을 설정했으므로
+      // 프론트엔드는 쿠키를 직접 다룰 필요 없음
+      await queryClient.invalidateQueries({ queryKey: ['auth'] });
 
-        await queryClient.invalidateQueries({ queryKey: ['auth'] });
+      setStatus('success');
 
-        setStatus('success');
+      const redirectUrl = localStorage.getItem('auth_redirect') || '/';
+      localStorage.removeItem('auth_redirect');
 
-        const redirectUrl = localStorage.getItem('auth_redirect') || '/';
-        localStorage.removeItem('auth_redirect');
-
-        setTimeout(() => {
-          navigate(redirectUrl, { replace: true });
-        }, 500);
-      } else {
-        setStatus('error');
-        setErrorMessage('인증 정보를 받지 못했습니다.');
-      }
+      setTimeout(() => {
+        navigate(redirectUrl, { replace: true });
+      }, 500);
     };
 
     handleCallback();

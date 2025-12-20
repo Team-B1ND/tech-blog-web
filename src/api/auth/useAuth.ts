@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient, clearTokens, setTokens } from '@/libs/api/client';
-import type { ApiResponse, ApiAuthInfo, ApiLoginInfo, ApiTokenResponse } from '@/libs/api/types';
+import { apiClient, clearTokens } from '@/libs/api/client';
+import type { ApiResponse, ApiAuthInfo, ApiLoginInfo } from '@/libs/api/types';
 
 export const useLoginInfo = () => {
   return useQuery({
@@ -20,34 +20,6 @@ export const useAuthInfo = () => {
       return data.data;
     },
     retry: false,
-  });
-};
-
-export const useMasterLogin = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (params: { username: string; password: string }) => {
-      const { data } = await apiClient.post<ApiResponse<ApiTokenResponse>>('/auth/master', params);
-      return data.data;
-    },
-    onSuccess: (data) => {
-      setTokens(data.accessToken, data.refreshToken);
-      queryClient.invalidateQueries({ queryKey: ['auth'] });
-      queryClient.invalidateQueries({ queryKey: ['member'] });
-    },
-  });
-};
-
-export const useRefreshToken = () => {
-  return useMutation({
-    mutationFn: async (refreshToken: string) => {
-      const { data } = await apiClient.post<ApiResponse<ApiTokenResponse>>('/auth/refresh', { refreshToken });
-      return data.data;
-    },
-    onSuccess: (data) => {
-      setTokens(data.accessToken, data.refreshToken);
-    },
   });
 };
 
