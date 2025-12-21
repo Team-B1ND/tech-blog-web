@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { HelmetProvider } from 'react-helmet-async';
 import { queryClient } from '@/libs/api/queryClient';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { SearchProvider } from '@/contexts/SearchContext';
@@ -21,35 +22,37 @@ import {Layout} from "@/components/common/Layout.tsx";
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>
-          <SearchProvider>
-            <GlobalStyle />
-            <BrowserRouter>
-            <ScrollToTop />
-            <Routes>
-              <Route path="/" element={<Layout />}>
-                <Route index element={<Home />} />
-                <Route path=":category" element={<Home />} />
-                <Route path="article/:id" element={<Article />} />
-                <Route path="author/:id" element={<Author />} />
-                <Route path="subscribe" element={<Subscribe />} />
-                <Route path="login" element={<Login />} />
-                <Route path="auth/callback" element={<AuthCallback />} />
-                <Route path="*" element={<NotFound />} />
-              </Route>
-              <Route path="/dashboard" element={<DashboardLayout />}>
-                <Route index element={<Dashboard />} />
-                <Route path="write" element={<Write />} />
-                <Route path="profile" element={<ProfileEdit />} />
-              </Route>
-            </Routes>
-            </BrowserRouter>
-          </SearchProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <AuthProvider>
+            <SearchProvider>
+              <GlobalStyle />
+              <BrowserRouter>
+                <ScrollToTop />
+                <Routes>
+                  <Route path="/" element={<Layout />}>
+                    <Route index element={<Home />} />
+                    <Route path=":category" element={<Home />} />
+                    <Route path="article/:id" element={<Article />} />
+                    <Route path="author/:id" element={<Author />} />
+                    <Route path="subscribe" element={<Subscribe />} />
+                    <Route path="login" element={<Login />} />
+                    <Route path="auth/callback" element={<AuthCallback />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Route>
+                  <Route path="/dashboard" element={<DashboardLayout />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="write" element={<Write />} />
+                    <Route path="profile" element={<ProfileEdit />} />
+                  </Route>
+                </Routes>
+              </BrowserRouter>
+            </SearchProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   );
 }
 

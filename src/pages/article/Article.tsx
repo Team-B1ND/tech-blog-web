@@ -5,8 +5,20 @@ import { ArticleDetailSkeleton } from '@/skeletons/article/ArticleDetailSkeleton
 import CommentSection from '@/components/comment/CommentSection';
 import { ViewSpan } from '@/components/article/ViewSpan';
 import { NotFound } from '@/pages/common/NotFound';
+import { SEO } from '@/components/common/SEO';
 import LinkIcon from '@/assets/icons/link.svg?react';
 import * as S from './Article.style';
+
+const extractDescription = (markdown: string, maxLength = 160): string => {
+  const text = markdown
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[([^\]]+)\]\(.*?\)/g, '$1')
+    .replace(/#{1,6}\s/g, '')
+    .replace(/[*_`~]/g, '')
+    .replace(/\n+/g, ' ')
+    .trim();
+  return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+};
 
 const Article = () => {
   const { article, isLoading, isError, copied, handleCopyLink, handleTagClick } = useArticlePage();
@@ -25,6 +37,18 @@ const Article = () => {
 
   return (
     <S.ArticleWrapper>
+      <SEO
+        title={article.title}
+        description={extractDescription(article.content)}
+        image={article.thumbnail || undefined}
+        url={`https://tech.b1nd.com/article/${article.id}`}
+        type="article"
+        article={{
+          authors: article.authors.map((a) => a.name),
+          publishedTime: article.createdAt,
+          tags: article.tags,
+        }}
+      />
       <S.ArticleHeader>
         <S.Title>{article.title}</S.Title>
         <S.Meta>
