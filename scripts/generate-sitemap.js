@@ -4,8 +4,20 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const SITE_URL = 'https://tech.b1nd.com';
-const API_URL = process.env.VITE_API_URL || 'http://localhost:8080';
+// .env 파일 읽기
+const envPath = path.join(__dirname, '../.env');
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf-8');
+  envContent.split('\n').forEach((line) => {
+    const [key, ...values] = line.split('=');
+    if (key && values.length) {
+      process.env[key.trim()] = values.join('=').trim();
+    }
+  });
+}
+
+const SITE_URL = process.env.SITE_URL;
+const API_URL = process.env.API_URL;
 
 async function fetchAllArticles() {
   const articles = [];
