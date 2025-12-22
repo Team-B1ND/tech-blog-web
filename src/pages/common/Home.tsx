@@ -6,7 +6,6 @@ import { Sidebar } from '@/components/common/Sidebar';
 import { Pagination } from '@/components/common/Pagination';
 import { NotFound } from '@/pages/common/NotFound';
 import { SEO } from '@/components/common/SEO';
-import { categoryDisplayName } from '@/types/article';
 import bannerImage from '@/assets/dodam/banner.png';
 import * as S from './Home.style';
 
@@ -35,14 +34,9 @@ export const Home = () => {
     );
   }
 
-  const categoryTitle = selectedCategory ? categoryDisplayName[selectedCategory] : null;
-
   return (
     <S.HomeContainer>
-      <SEO
-        title={categoryTitle ? `${categoryTitle} 아티클` : undefined}
-        url={selectedCategory ? `https://tech.b1nd.com/${currentSlug}` : 'https://tech.b1nd.com'}
-      />
+      <SEO url={selectedCategory ? `https://tech.b1nd.com/${currentSlug}` : 'https://tech.b1nd.com'} />
       <S.Hero>
         <S.HeroBanner src={bannerImage} alt="B1ND 기술 블로그" />
       </S.Hero>

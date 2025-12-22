@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /assets/*.png
+Disallow: /assets/*.jpg
+Disallow: /assets/*.jpeg
+Disallow: /assets/*.gif
+Disallow: /assets/*.webp
+Disallow: /assets/*.svg
 
 Sitemap: https://tech.b1nd.com/sitemap.xml
